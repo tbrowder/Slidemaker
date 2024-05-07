@@ -1,5 +1,4 @@
 =begin pod
-
 =begin para
 title: Why Linux?
 <!-- insert-file why-linux-headers.md -->
