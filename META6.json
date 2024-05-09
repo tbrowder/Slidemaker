@@ -8,6 +8,7 @@
   "depends": [
     "Pod::TreeWalker",
     "RakupodObject",
+    "Pod::To::Anything",
     "Pod::To::Pdf"
   ],
   "description": "Provides classes and routines for generating PDF slides from Rakudoc input.",
@@ -15,6 +16,7 @@
   "name": "Slidemaker",
   "perl": "6.d",
   "provides": {
+    "Slide": "lib/Slide.rakumod",
     "Slidemaker": "lib/Slidemaker.rakumod"
   },
   "resources": [
