@@ -6,8 +6,11 @@
   "build-depends": [
   ],
   "depends": [
+    "Pod::TreeWalker",
+    "RakupodObject",
+    "Pod::To::Pdf"
   ],
-  "description": "blah blah blah",
+  "description": "Provides classes and routines for generating PDF slides from Rakudoc input.",
   "license": "Artistic-2.0",
   "name": "Slidemaker",
   "perl": "6.d",
@@ -16,8 +19,9 @@
   },
   "resources": [
   ],
-  "source-url": "",
+  "source-url": "https://github.com/tbrowder/Slidemaker.git",
   "tags": [
+    "pod slides pdf"
   ],
   "test-depends": [
   ],
