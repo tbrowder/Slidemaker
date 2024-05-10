@@ -7,7 +7,13 @@ use Utils;
 my $pod-obj;
 
 # exercise loading either the example in resources or one in t/data
-my $eg-path = "./resources/example.pod"; # (extract the pod as a string
+my @rpaths = get-resources-paths;
+my $eg-path;
+for @rpaths {
+    if $_.contains("example.pod") {
+        $eg-path = $_;
+    }
+}
 my $istr = get-content $eg-path;
 lives-ok {
     $pod-obj = extract-rakupod-object $istr;
