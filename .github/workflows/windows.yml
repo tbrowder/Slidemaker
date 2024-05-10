@@ -1,7 +1,4 @@
 name: Win64
-  
-env:
-  TEST_JOBS: 1
 
 on:
   push:
@@ -23,9 +20,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: Raku/setup-raku@v1
+        with:
+          raku-version: ${{ matrix.raku-version }}
       - name: Install Dependencies
-        run: |
-            choco install rakudostar
-            zef --exclude="z" install --debug --/test --test-depends --deps-only .
+        run: zef install --/test --test-depends --deps-only .
       - name: Run Tests
-        run: zef install . --debug
+        run: zef --debug install .
