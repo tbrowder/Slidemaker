@@ -16,10 +16,12 @@
   "name": "Slidemaker",
   "perl": "6.d",
   "provides": {
-    "Slide": "lib/Slide.rakumod",
-    "Slidemaker": "lib/Slidemaker.rakumod"
+    "Slidemaker": "lib/Slidemaker.rakumod",
+    "Slides": "lib/Slides.rakumod",
+    "Utils": "lib/Utils.rakumod"
   },
   "resources": [
+    "example.pod"
   ],
   "source-url": "https://github.com/tbrowder/Slidemaker.git",
   "tags": [

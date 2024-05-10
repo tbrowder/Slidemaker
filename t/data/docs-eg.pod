@@ -1,0 +1,13 @@
+=begin pod
+=slide
+=title Why Linux?
+=subtitle Introduction
+=author Joey Marshal
+=date 2024-05-10
+=item It's good for you.
+=item It's fun, too!
+=slide
+=title2 Why Linux?
+=subtitle
+=subtitle That's all folks!
+=end pod

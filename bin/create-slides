@@ -1,0 +1,55 @@
+#!/usr/bin/env raku
+
+use Slidemaker;
+
+if not @*ARGS {
+    print qq:to/HERE/;
+    Usage: {$*PROGRAM.basename} <rakupod src file> [...options...]
+
+    Uses the input file to create a PDF slide document.
+
+    Options:
+      example - Creates a slide deck from an example in './resources':
+                    example.pod
+    HERE
+    exit;
+}
+
+my $ifil;
+my $eg;
+my @args;
+for @*ARGS {
+    if $_.IO.r {
+        if not $ifil {
+            $ifil = $_;
+            next;
+        }
+        print qq:to/HERE/;
+        FATAL: Input file '$_' is unexpected, you have already entered 
+               an input file: '$ifil'.
+        HERE
+        exit;
+    }
+    if $_ ~~ /^ :i e/ {
+        ++$eg;
+        next;
+    }
+    @args.push: $_;
+}
+
+# must have an input file
+if $eg {
+    # get the example file
+    $ifil = slurp
+}
+
+$unless $ifil {
+    print qq:to/HERE/;
+    FATAL: No input file was entered.
+    HERE
+    exit;
+}
+
+my $sl = Slidemaker.new: $ifil;
+
+

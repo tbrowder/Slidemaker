@@ -1,25 +1,7 @@
 use Pod::To::Anything;
 use Pod::To::Anything::Subsets;
 
-use RakupodObject;
-
-unit class Slidemaker does Pod::To::Anything;
-
-has @!slides;
-has $!ifil;
-
-# methods defined in role pos::To::Anything
-=begin comment
-#| Retrieve the parsed contents from a Pod object. This is a helper method to
-#| traverse Pod6 objects.
-method traverse (Any:D $pod --> Str) {
-	$pod.contents.map({ self.render($_) }).join.trim
-}
-#| Unpod a Pod element, turning it into plain ol' text instead.
-method unpod (Any:D $pod --> Str) {
-	$pod.contents.map(*.contents).join(' ')
-}
-=end comment
+unit class Slides does Pod::To::Anything;
 
 # These render methods cover all available Pod constructs. These should
 # all be implemented to ensure your Pod formatter will work as intended.
@@ -33,6 +15,7 @@ multi method render (Pod::Block::Named::Version:D $ --> Str) { … }
 multi method render (Pod::Block::Named::Pod:D $ --> Str) { … }
 multi method render (Pod::Block::Para:D $ --> Str) { … }
 multi method render (Pod::Block::Table:D $ --> Str) { … }
+
 multi method render (Pod::FormattingCode::B:D $ --> Str) { … }
 multi method render (Pod::FormattingCode::C:D $ --> Str) { … }
 multi method render (Pod::FormattingCode::E:D $ --> Str) { … }
