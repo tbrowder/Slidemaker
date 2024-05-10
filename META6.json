@@ -8,8 +8,7 @@
   "depends": [
     "Pod::TreeWalker",
     "RakupodObject",
-    "Pod::To::Anything",
-    "Pod::To::Pdf"
+    "Pod::To::Anything"
   ],
   "description": "Provides classes and routines for generating PDF slides from Rakudoc input.",
   "license": "Artistic-2.0",
