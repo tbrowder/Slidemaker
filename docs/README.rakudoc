@@ -51,7 +51,7 @@ An example theme configuration:
 =begin code
 =end code
 
-Run C<$?> to download the example file from './resources'.
+Run C<$create-slides eg> to download the example file from './resources'.
 
 =head1 AUTHOR
 

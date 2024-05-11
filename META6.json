@@ -17,8 +17,10 @@
   "perl": "6.d",
   "provides": {
     "Slidemaker": "lib/Slidemaker.rakumod",
-    "Slides": "lib/Slides.rakumod",
-    "Utils": "lib/Utils.rakumod"
+    "Slidemaker::Section": "lib/Slidemaker/Section.pm6",
+    "Slidemaker::Slides": "lib/Slidemaker/Slides.rakumod",
+    "Slidemaker::Utils": "lib/Slidemaker/Utils.rakumod",
+    "unused::Anything": "lib/unused/Anything.pm6"
   },
   "resources": [
     "example.pod"
