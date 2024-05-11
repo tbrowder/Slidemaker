@@ -1,10 +1,9 @@
 #!/usr/bin/env raku
 
 use Slidemaker;
-#use Utils;
-use Module::Utils;
+use Utils;
 
-if not @*ARGS {xd
+if not @*ARGS {
     print qq:to/HERE/;
     Usage: {$*PROGRAM.basename} <rakupod src file> [...options...]
 
@@ -53,5 +52,6 @@ unless $ifil {
     HERE
     exit;
 }
-say "Using input file '$ifil'";
-my $sl = Slidemaker.new: :pod-file($ifil);
+say "Using input file '$ifil'...";
+my $sl = Slidemaker.new; #: :pod-file($ifil);
+$sl.unpod: $ifil;
