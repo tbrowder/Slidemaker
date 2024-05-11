@@ -53,7 +53,7 @@ Currently, the input document satisfies a basic need for a quick, text-based bri
 
 An example theme configuration:
 
-See the *examples* directory for details.
+Run `$?` to download the example file from './resources'.
 
 AUTHOR
 ======

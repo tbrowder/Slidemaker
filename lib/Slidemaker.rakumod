@@ -6,7 +6,7 @@ use RakupodObject;
 unit class Slidemaker does Pod::To::Anything;
 
 has @!slides;
-has $!ifil;
+has $!pod-file;
 
 # methods defined in role pos::To::Anything
 =begin comment

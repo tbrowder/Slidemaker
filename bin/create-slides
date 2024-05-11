@@ -1,8 +1,10 @@
 #!/usr/bin/env raku
 
 use Slidemaker;
+#use Utils;
+use Module::Utils;
 
-if not @*ARGS {
+if not @*ARGS {xd
     print qq:to/HERE/;
     Usage: {$*PROGRAM.basename} <rakupod src file> [...options...]
 
@@ -25,7 +27,7 @@ for @*ARGS {
             next;
         }
         print qq:to/HERE/;
-        FATAL: Input file '$_' is unexpected, you have already entered 
+        FATAL: Input file '$_' is unexpected, you have already entered
                an input file: '$ifil'.
         HERE
         exit;
@@ -39,17 +41,17 @@ for @*ARGS {
 
 # must have an input file
 if $eg {
-    # get the example file
-    $ifil = slurp
+    # get the example file from '/resources'
+    $ifil = "example.pod";
+    my $str = get-content "./resources/$ifil";
+    spurt "example.pod", $str;
 }
 
-$unless $ifil {
+unless $ifil {
     print qq:to/HERE/;
     FATAL: No input file was entered.
     HERE
     exit;
 }
-
-my $sl = Slidemaker.new: $ifil;
-
-
+say "Using input file '$ifil'";
+my $sl = Slidemaker.new: :pod-file($ifil);

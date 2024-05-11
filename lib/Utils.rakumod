@@ -1,9 +1,32 @@
-unit module Utils; # HowToUseModuleResources;
+unit module Utils; # source is copy of: ExampleLib::UseResources;
 
-sub get-resources-paths(:$debug --> List) is export {
-    my @list =
-        $?DISTRIBUTION.meta<resources>.map({"resources/$_"});
-    @list
+#===== exported routines
+sub show-resources(:$debug --> List) is export {
+    my %h = get-resources-hash;
+    say "Resources:";
+    say "  $_" for %h.keys.sort;
+}
+
+sub download-resources(:$debug --> List) is export {
+    my %h = get-resources-hash;
+    say "Resources:";
+    for %h.keys.sort -> $basename {
+        my $path = %h{$basename};
+        my $s = get-content $path;
+        spurt $basename, $s;
+        say "  $basename";
+    }
+}
+
+sub get-resources-hash(:$debug --> Hash) is export {
+    my @list = get-resources-paths;
+    # convert to a hash: key: file.basename => path
+    my %h;
+    for @list -> $path {
+        my $f = $path.IO.basename;
+        %h{$f} = $path;
+    }
+    %h
 }
 
 sub get-content($path, :$nlines = 0) is export {
@@ -26,7 +49,14 @@ sub get-content($path, :$nlines = 0) is export {
     }
 } # sub get-content($path, :$nlines = 0) is export {
 
-sub resource-exists($path? --> Bool) is export {
+#===== non-exported routines
+sub get-resources-paths(:$debug --> List) {
+    my @list =
+        $?DISTRIBUTION.meta<resources>.map({"resources/$_"});
+    @list
+}
+
+sub resource-exists($path? --> Bool) {
     return False if not $path.defined;
 
     # "eats" both warnings and errors; fix coming to Zef

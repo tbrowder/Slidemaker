@@ -6,8 +6,9 @@
   "build-depends": [
   ],
   "depends": [
+    "File::Temp",
     "Pod::TreeWalker",
-    "RakupodObject",
+    "RakupodObject:ver<0.0.6>",
     "Pod::To::Anything"
   ],
   "description": "Provides classes and routines for generating PDF slides from Rakudoc input.",

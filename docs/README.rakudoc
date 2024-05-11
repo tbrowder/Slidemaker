@@ -14,9 +14,9 @@ $ See file 'MyBriefing.pdf'
 
 =head1 DESCRIPTION
 
-B<Slidemaker> provides a system to create a PDF slide deck
-from a Rakudoc description. Following is a short example
-of such a description:
+B<Slidemaker> provides a system to create a PDF slide deck from a
+Rakudoc description. Following is a short example of such a
+description:
 
 =begin code
 =begin pod
@@ -34,9 +34,8 @@ of such a description:
 =end pod
 =end code
 
-Currently, the input document satisfies a basic need for
-a quick, text-based briefing presentation. It can
-provide:
+Currently, the input document satisfies a basic need for a quick,
+text-based briefing presentation. It can provide:
 
 =item Letter or A4 paper in landscape orientation
 =item text
@@ -52,7 +51,7 @@ An example theme configuration:
 =begin code
 =end code
 
-See the I<examples> directory for details.
+Run C<$?> to download the example file from './resources'.
 
 =head1 AUTHOR
 
@@ -62,10 +61,11 @@ Tom Browder <tbrowder@acm.org>
 
 © 2024 Tom Browder
 
-This library is free software; you may redistribute it or modify it under the Artistic License 2.0.
+This library is free software; you may redistribute it or modify it
+under the Artistic License 2.0.
 
-Note the code used from module Pod::To:Anything is licensed
-under the AGP License, version 3.0. See its wording and how it
-is to be applied at L<|https://>.
+Note the code used from module Pod::To:Anything is licensed under the
+AGP License, version 3.0. See its wording and how it is to be applied
+at L<|https://>.
 
 =end pod
