@@ -3,7 +3,7 @@ use Test;
 use RakupodObject;
 
 use Slidemaker;
-use Utils;
+use Slidemaker::Utils;
 use File::Temp;
 
 my $pod-obj;
