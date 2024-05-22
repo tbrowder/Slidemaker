@@ -1,7 +1,16 @@
 The file "orig/why-linux.md" is the source
 of the old process to create a pdf file.
 
-The file "orig/why-linux.pod6" was created
-by executing:
+It was hand-translated to an updates Softmaker version
+on 'biggom'.
 
-  from-
+Use Patrick's module to do the pod breakdown and rendering
+before tweaking it for Slidemaker.
+
+The general overview is this:
+
++ Break up the input pod to slides by '=slide' block entries
++ Create a class Slide for the '=slide' blocks
++ The result should be a list of Slide objects
++ Convert each Slide object to a PDF page
++ The end result will be a PDF doc with one page per slide

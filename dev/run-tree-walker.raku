@@ -4,7 +4,7 @@ use Pod::TreeWalker;
 
 use RakupodObject;
 
-my $pod-file = "./why-linux.pod6".IO;
+my $pod-file = "./orig/why-linux.pod6".IO;
 my $pod-obj  = extract-rakupod-object($pod-file);
 
 my $l = Pod::TreeWalker::Listener.new; 
