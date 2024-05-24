@@ -2,7 +2,7 @@ The file "orig/why-linux.md" is the source
 of the old process to create a pdf file.
 
 It was hand-translated to an updates Softmaker version
-on 'biggom'.
+on 'bigtom'.
 
 Use Patrick's module to do the pod breakdown and rendering
 before tweaking it for Slidemaker.
