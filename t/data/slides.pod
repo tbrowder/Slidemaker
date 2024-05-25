@@ -2,7 +2,7 @@
 
 =begin comment
 
-This pod is designed to describe the layout for a
+1.This pod is designed to describe the layout for a
 sample slide deck to be transformed into a PDF 
 document.
 
@@ -13,16 +13,16 @@ defined in the first one.
 =end comment
 
 =for Configuration
-= :color<blue>
+= :color<2. blue>
 
-=Slide My Title
-=Subtitle  Why?
+=Slide 3. My Title
+=Subtitle 4. Why?
 
-=Slide Next Title
+=Slide 5. Next Title
 
-A para
+7. A para
 
-=item Foo
+=item 8. Foo
 
 
 
