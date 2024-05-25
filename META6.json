@@ -7,7 +7,6 @@
   ],
   "depends": [
     "File::Temp",
-    "Pod::TreeWalker",
     "RakupodObject:ver<0.0.6>",
     "Pod::To::Anything"
   ],
@@ -17,10 +16,9 @@
   "perl": "6.d",
   "provides": {
     "Slidemaker": "lib/Slidemaker.rakumod",
-    "Slidemaker::Section": "lib/Slidemaker/Section.pm6",
+    "Slidemaker::ParsePod": "lib/Slidemaker/ParsePod.rakumod",
     "Slidemaker::Slides": "lib/Slidemaker/Slides.rakumod",
-    "Slidemaker::Utils": "lib/Slidemaker/Utils.rakumod",
-    "unused::Anything": "lib/unused/Anything.pm6"
+    "Slidemaker::Utils": "lib/Slidemaker/Utils.rakumod"
   },
   "resources": [
     "example.pod"

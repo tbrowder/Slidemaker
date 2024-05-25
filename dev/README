@@ -1,15 +1,23 @@
 The file "orig/why-linux.md" is the source
 of the old process to create a pdf file.
 
-It was hand-translated to an updates Softmaker version
+It was hand-translated to an updated Softmaker version
 on 'bigtom'.
 
-Use Patrick's module to do the pod breakdown and rendering
+Use Patrick's module (Pod::To::Anything) to do the pod breakdown and rendering
 before tweaking it for Slidemaker.
 
 The general overview is this:
 
++ Define a slide deck configuration scheme in pod format
+  - ensure it uses standard pod to the extent possible
+    and it's expandable
+
++ Define a suitable set of pod entries to describe a simple
+  slide's contents
+
 + Break up the input pod to slides by '=slide' block entries
+
 + Create a class Slide for the '=slide' blocks
 + The result should be a list of Slide objects
 + Convert each Slide object to a PDF page
