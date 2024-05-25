@@ -2,7 +2,7 @@
 
 use RakupodObject;
 
-my $ifil = "../t/data/slides.pod";
+my $ifil = "./t/data/slides.pod";
 
 if not @*ARGS {
     print qq:to/HERE/;
@@ -30,13 +30,26 @@ while @pods {
     }
     for @c -> $c {
         my $typ = is-pod($c);
-        if $typ {
-            ++$idx;
-            say "Found a Pod object $idx: $typ";
-            @pods.unshift: $c;
+        unless $typ {
+            say "Found content $idx: $c";
             next;
         }
-        say "Found content $idx: $c";
+        ++$idx;
+        say "Found a Pod object $idx: $typ";
+        with $typ {
+            when /:i named / {
+                my $nam = $c.name.lc;
+                say "  Its name is '$nam'";
+                if $nam eq 'slide' {
+                    say "Starting a new slide...";
+                }
+            }
+            when /:i fc / {
+                my $fc = $c.type;
+                say "  Its type is '$fc'";
+            }
+        }
+        @pods.unshift: $c;
     }
 }
 
