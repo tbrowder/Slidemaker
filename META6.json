@@ -10,7 +10,7 @@
     "Text::Utils",
     "File::Temp",
     "Pod::Load",
-    "PDF::Compress"
+    "Compress::PDF"
   ],
   "description": "Provides routines for generating PDF slides from Rakudoc input.",
   "license": "Artistic-2.0",
