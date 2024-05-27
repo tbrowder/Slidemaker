@@ -1,4 +1,4 @@
-unit module Slidemaker::PageProcs;
+unit module PageProcs;
 
 use PDF::API6;
 use PDF::Lite;

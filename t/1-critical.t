@@ -1,6 +1,6 @@
 use Test;
 
-use RakupodObject;
+use Pod::Load;
 
 use Slidemaker;
 use Utils;
@@ -11,7 +11,7 @@ my $pod-obj;
 # data path
 my $ifil = "t/data/docs-eg.pod";
 lives-ok {
-    $pod-obj = extract-rakupod-object $ifil;
+    $pod-obj = (load $ifil).head;
 }, "pod obj from a file in t/data";
 
 done-testing;

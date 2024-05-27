@@ -1,6 +1,6 @@
 use Test;
 
-use RakupodObject;
+use Pod::Load;
 
 use Slidemaker;
 use Slidemaker::Utils;
@@ -21,7 +21,7 @@ else {
 
 my $istr = get-content $eg-path;
 lives-ok {
-    $pod-obj = extract-rakupod-object $istr;
+    $pod-obj = (load $istr).head;
 }, "pod obj from a string in resources file";
 
 # check downloading resource files

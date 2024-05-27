@@ -9,8 +9,8 @@ use PDF::Content::Page;
 use PDF::Content::PageTree;
 use PDF::Content::Color :ColorName, :color;
 
-use lib "../lib";
-use Slidemaker::PageProcs;
+use lib "./lib";
+use PageProcs;
 
 # various font files on Linux
 my $ffil  = "/usr/share/fonts/opentype/freefont/FreeSerif.otf";

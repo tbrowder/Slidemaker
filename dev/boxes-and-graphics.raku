@@ -5,7 +5,7 @@ use PDF::API6;
 use PDF::Lite;
 use PDF::Content::Color :ColorName, :color;
 
-my $ofile = "draw-cells.pdf";
+my $ofile = "boxes-and-graphics.pdf";
 if not @*ARGS {
     print qq:to/HERE/;
     Usage: {$*PROGRAM.basename} go

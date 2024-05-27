@@ -28,7 +28,7 @@ DESCRIPTION
     = :margins<1> 
     =comment a '=slide' and its title start a new slide
     =slide Why Linux?
-    =subtitle Introduction
+    =subtitle Introduction to the Windows/Mac alternative
     =author Joey Marshal
     =date 2024-05-10
     =item It's good for you.

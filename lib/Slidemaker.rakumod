@@ -3,6 +3,7 @@ unit module Slidemaker;
 use Abbreviations;
 
 use Slidemaker::Utils;
+use Slidemaker::Slide;
 
 my @slides;
 my $pod-file;
@@ -54,6 +55,7 @@ multi action(@*ARGS) is export {
 
     # must have an input file
     if $eg {
+        # TODO make this work for an installed module
         # get the example file from '/resources'
         $ifil = "example.pod";
         my $str = get-content "./resources/$ifil";

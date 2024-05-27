@@ -1,21 +1,47 @@
 #!/usr/bin/env raku
 
-use RakupodObject;
+use Pod::Load;
 
 my $ifil = "./t/data/slides.pod";
 
 if not @*ARGS {
     print qq:to/HERE/;
-    Usage: {$*PROGRAM.basename} go
+    Usage: {$*PROGRAM.basename} <mode>
 
-    Converts file '$ifil' to a pod tree.
+    Modes:
+      go     - Converts file '$ifil' to a pod tree
+      <file> - Converts file '<file>' to a pod tree
+
     HERE
     exit;
 }
 
-my $pod = extract-rakupod-object $ifil;
+my $pod-fil;
+
+my $arg = @*ARGS.head;
+if $arg.IO.r {
+    $pod-fil = $arg;
+}
+else {
+    $pod-fil = $ifil;
+}
+
+my @roots = load $pod-fil;
+my $nr = @roots.elems;
+if $nr > 1 {
+    print qq:to/HERE/;
+    WARNING: This input pod file has $nr roots. This program
+    is not meant to handle a pod file with more than one pod
+    root. 
+
+    Exiting.
+    HERE
+    exit;
+}
+
+
 my ($p, @c, %h);
-$p = $pod;
+$p = @roots.head;
 
 my @pods;
 @pods.unshift: $p;
@@ -47,6 +73,12 @@ while @pods {
             when /:i fc / {
                 my $fc = $c.type;
                 say "  Its type is '$fc'";
+                my @arr = $c.meta;
+                say "  Its meta is '{@arr.gist}'";
+            }
+            when /:i item / {
+                my $lvl = $c.level;
+                say "  Its level is '$lvl'";
             }
         }
         @pods.unshift: $c;
