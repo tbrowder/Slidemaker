@@ -6,6 +6,7 @@
   "build-depends": [
   ],
   "depends": [
+    "Abbreviations",
     "PDF::Document",
     "Text::Utils",
     "File::Temp",
