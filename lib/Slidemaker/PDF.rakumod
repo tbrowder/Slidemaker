@@ -114,7 +114,7 @@ sub make-page(
     =end comment
 }
 
-=begin comment
+=begin commemt
 # file: boxes-and-graphics.raku from Calendar/dev
 #!/bin/env raku
 
