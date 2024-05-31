@@ -6,6 +6,7 @@
   "build-depends": [
   ],
   "depends": [
+    "JSON::Class:auth<zef::vrurg>",
     "Abbreviations",
     "PDF::Document",
     "Text::Utils",
