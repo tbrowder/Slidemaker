@@ -12,6 +12,11 @@
     "Text::Utils",
     "File::Temp",
     "Pod::Load",
+    "PDF::Tags::Reader",
+    "Cairo",
+    "Pod::Load",
+    "Pod::To::PDF",
+    "Pod::To::Markdown",
     "Compress::PDF"
   ],
   "description": "Provides routines for generating PDF slides from Rakudoc input.",

@@ -1,5 +1,7 @@
 unit module Slidemaker;
 
+use Pod::To::PDF;
+use Pod::To::Markdown;
 use Abbreviations;
 
 use Slidemaker::Utils;
@@ -25,6 +27,7 @@ multi action() is export {
       example  - Creates a slide deck from the 'example.pod' file in
                    './resources'.  The resulting pdf slide deck and
                    the example source file are placed in the current directory.
+      md       - Creates a Markdown version of the input file.
     HERE
 }
 
@@ -71,5 +74,36 @@ multi action(@*ARGS) is export {
     say "Using input file '$ifil'...";
     if $eg {
         say "  (in the current directory)";
+        # TODO use ?*RESOURCES
+        handle-pdf "resources/example.rakudoc";
     }
 }
+
+use Pod::To::PDF:
+use Pod::Load;
+use Cairo;
+sub handle-pdf(
+    $podfile, # file with rakupod contents
+    :$debug,
+    $save-as,
+    ) is export {
+
+    #=== create the PDF file
+    # from David's Pod::To::PDF module's routine 'pod2pdf':
+    # inputs:
+    my $pod = load($file.IO);
+    my Cairo::Surface::PDF $pdf = pod2pdf(
+        $podfile,
+        # options
+        :$save-as,
+        :$surface,
+        :$width = (8.5 * 72),
+        :$height = (11 * 72),
+        :
+    );
+    $pdf.finish;
+    #=== finish the PDF file
+
+
+}
+
