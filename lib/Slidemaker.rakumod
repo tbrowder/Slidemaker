@@ -83,10 +83,15 @@ use Pod::To::PDF:
 use Pod::Load;
 use Cairo;
 sub handle-pdf(
-    $podfile, # file with rakupod contents
+    $podfile,  # file with rakupod contents
+    :$save-as, # default: input name with extension replaced with 'pdf'
+    :$margins, # pod2pdf default: 0,
+    :$media = 'letter', # TODO improve media handling
+    :$orientation = 'portrait', # or landscape
     :$debug,
-    $save-as,
     ) is export {
+
+    my ($width, $height);
 
     #=== create the PDF file
     # from David's Pod::To::PDF module's routine 'pod2pdf':
@@ -96,10 +101,10 @@ sub handle-pdf(
         $podfile,
         # options
         :$save-as,
-        :$surface,
+        :$surface, # not sure if I need this for a single doc
         :$width = (8.5 * 72),
         :$height = (11 * 72),
-        :
+        :$margins = 20, # default
     );
     $pdf.finish;
     #=== finish the PDF file
