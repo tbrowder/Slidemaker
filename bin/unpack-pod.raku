@@ -48,10 +48,10 @@ my @pods;
 my $idx = 0;
 while @pods {
     $p = @pods.pop;
-    @c = $p.contents;
-    %h = $p.config;
+    %h = $p.config if $p.config;
+    @c = $p.contents if $p.contents;;
     for %h.kv -> $k, $v {
-        say "key: $k";
+        say "config key: $k";
         say "  value: $v";
     }
     for @c -> $c {
@@ -98,6 +98,7 @@ sub is-pod($o) {
         when Pod::Item              { $res = <Item>       }
         when Pod::Defn              { $res = <Defn>       }
         when Pod::FormattingCode    { $res = <FC>         }
+        default                     { $res = <Unknown>    }
     }
     $res
 }

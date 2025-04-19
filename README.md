@@ -3,7 +3,7 @@
 NAME
 ====
 
-**Slidemaker** - Provides classes and routines for generating PDF slides from Rakudoc input.
+**Slidemaker** - Provides routines for generating PDF slides from Rakudoc input.
 
 SYNOPSIS
 ========

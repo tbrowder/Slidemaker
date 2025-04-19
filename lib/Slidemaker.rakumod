@@ -8,7 +8,7 @@ use Slidemaker::Utils;
 use Slidemaker::Slide;
 
 my @slides;
-my $pod-file;
+my $podfile;
 
 multi action() is export {
     # usage
@@ -24,7 +24,7 @@ multi action() is export {
       format=X - Where X is the paper size (Letter or A4; default: Letter)
       orient=X - Where X is the orientation (landscape or portrait;
                    default: landscape
-      example  - Creates a slide deck from the 'example.pod' file in
+      example  - Creates a slide deck from the 'example.rakudoc' file in
                    './resources'.  The resulting pdf slide deck and
                    the example source file are placed in the current directory.
       md       - Creates a Markdown version of the input file.
@@ -60,9 +60,9 @@ multi action(@*ARGS) is export {
     if $eg {
         # TODO make this work for an installed module
         # get the example file from '/resources'
-        $ifil = "example.pod";
+        $ifil = "example.rakudoc";
         my $str = get-content "./resources/$ifil";
-        spurt "example.pod", $str;
+        spurt "example.rakudoc", $str;
     }
 
     unless $ifil {
@@ -76,39 +76,50 @@ multi action(@*ARGS) is export {
         say "  (in the current directory)";
         # TODO use ?*RESOURCES
         handle-pdf "resources/example.rakudoc";
+        
     }
 }
 
-use Pod::To::PDF:
+use Pod::To::PDF;
 use Pod::Load;
 use Cairo;
 sub handle-pdf(
     $podfile,  # file with rakupod contents
-    :$save-as, # default: input name with extension replaced with 'pdf'
-    :$margins, # pod2pdf default: 0,
-    :$media = 'letter', # TODO improve media handling
+    :$save-as is copy, # default: input basename with extension replaced 
+               #   with 'pdf', save locally
+    :$margins is copy,
+    :$media = 'letter', # TODO improve media and oeientation handling
     :$orientation = 'portrait', # or landscape
     :$debug,
     ) is export {
 
-    my ($width, $height);
+    $margins = 20; # pdf default
+    my $width   = (8.5 * 72).Int;
+    my $height  = (11 * 72).Int;
+
+    if not $save-as {
+        $save-as = $podfile.IO.basename;
+        $save-as ~~ s/'.' .* $/.pdf/;
+    }
+    my $surface = $podfile;
 
     #=== create the PDF file
     # from David's Pod::To::PDF module's routine 'pod2pdf':
     # inputs:
-    my $pod = load($file.IO);
+    my $pod = load($podfile.IO);
     my Cairo::Surface::PDF $pdf = pod2pdf(
-        $podfile,
+        $pod,
         # options
         :$save-as,
-        :$surface, # not sure if I need this for a single doc
-        :$width = (8.5 * 72),
-        :$height = (11 * 72),
-        :$margins = 20, # default
+        #:$surface, # not sure if I need this for a single doc
+        :$width,
+        :$height,
+        :$margins,
     );
     $pdf.finish;
     #=== finish the PDF file
 
+    say "See output pdf file: $save-as";
 
 }
 

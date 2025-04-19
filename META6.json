@@ -25,6 +25,7 @@
   "perl": "6.d",
   "provides": {
     "Slidemaker": "lib/Slidemaker.rakumod",
+    "Slidemaker::Action": "lib/Slidemaker/Action.rakumod",
     "Slidemaker::PDF": "lib/Slidemaker/PDF.rakumod",
     "Slidemaker::ParsePod": "lib/Slidemaker/ParsePod.rakumod",
     "Slidemaker::Slide": "lib/Slidemaker/Slide.rakumod",
