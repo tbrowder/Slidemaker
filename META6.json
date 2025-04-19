@@ -32,7 +32,7 @@
     "Slidemaker::Utils": "lib/Slidemaker/Utils.rakumod"
   },
   "resources": [
-    "example.pod"
+    "example.rakudoc"
   ],
   "source-url": "https://github.com/tbrowder/Slidemaker.git",
   "tags": [

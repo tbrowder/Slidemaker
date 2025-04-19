@@ -49,7 +49,7 @@ my $idx = 0;
 while @pods {
     $p = @pods.pop;
     %h = $p.config if $p.config;
-    @c = $p.contents if $p.contents;;
+    @c = $p.contents if $p.contents;
     for %h.kv -> $k, $v {
         say "config key: $k";
         say "  value: $v";
