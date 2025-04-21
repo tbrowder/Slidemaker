@@ -18,6 +18,7 @@
     "Pod::Load",
     "Pod::To::PDF",
     "Pod::To::Markdown",
+    "Pod::To::Anything",
     "Compress::PDF"
   ],
   "description": "Provides routines for generating PDF slides from Rakudoc input.",
