@@ -4,9 +4,6 @@ of the old process to create a pdf file.
 It was hand-translated to an updated Softmaker version
 on 'bigtom'.
 
-Use Patrick's module (Pod::To::Anything) to do the pod breakdown and rendering
-before tweaking it for Slidemaker.
-
 The general overview is this:
 
 + Define a slide deck configuration scheme in pod format

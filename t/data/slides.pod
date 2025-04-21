@@ -6,20 +6,21 @@
 sample slide deck to be transformed into a PDF 
 document.
 
-The Configuration sections apply until superseded
+The Config sections apply until superseded
 by another value. All applicable keys should be
 defined in the first one.
 
 =end comment
 
-=comment case for Named blocks is NOT significant for this project
-=for Configuration
+=for Config
 = :color<2. blue> :height<1in> :width<full> 
 
-=Slide My Title
+=slide 
+=Title My Title
 =Subtitle Why?
 
-=Slide Next Slide
+=slide 
+=Title Next Slide
 
 A para with a B<BOLD> word
 
@@ -30,6 +31,5 @@ Bar
 
 A little Foo
 =end item
-
 
 =end pod
