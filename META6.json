@@ -8,7 +8,8 @@
   "depends": [
     "JSON::Class:auth<zef:vrurg>",
     "Abbreviations",
-    "PDF::Document",
+    "PDF::Document:ver<0.0.10+>",
+    "FontFactory::Type1:ver<1.1.1+>",
     "Text::Utils",
     "File::Temp",
     "Pod::Load",
