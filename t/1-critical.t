@@ -3,7 +3,7 @@ use Test;
 use Pod::Load;
 
 use Slidemaker;
-use Utils;
+use Slidemaker::Utils;
 
 my $pod-obj;
 

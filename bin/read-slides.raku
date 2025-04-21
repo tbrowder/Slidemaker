@@ -30,9 +30,13 @@ else {
 # each chunk consists of the text starting at
 # each =slide until the EOF or the next =slide
 
+class Config {
+}
+
 class Slide {
     has $.title;
     has @.lines;
+    has %.config;
 }
 
 my @slides;
