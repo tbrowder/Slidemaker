@@ -42,6 +42,8 @@ my $curr-slide   = 0;
 my $curr-comment = 0;
 my $curr-config  = 0;
 
+my %config = %();
+
 my @lines = $pod-fil.IO.lines;
 for @lines.kv -> $i, $v {
     my $line-num = $i+1;
@@ -94,7 +96,17 @@ for @lines.kv -> $i, $v {
     when $v ~~ /^ \h* '=for' (\N+) / {
         my $txt = ~$0;
         if $txt ~~ /:i configuration / {
-            # inspect any following lines...
+            $curr-config = 1;
+        }
+    }
+    when $v ~~ /^ \h* '=' (\N+) / {
+        my $txt = ~$0;
+        if $curr-config {
+            # config line is space separated tokens
+            my @tokens = $txt.words;
+        }
+        else {
+            die "FATAL: Unexpected line: '$txt'";
         }
     }
     default {
@@ -103,7 +115,10 @@ for @lines.kv -> $i, $v {
             $curr-slide.lines.push: $v;
         }
         else {
-            say "Unexpected line: '$v'";
+            say "Unexpected line number {$i+1}: '$v'";
+            say " curr-slide:   ", $curr-slide;
+            say " curr-comment: ", $curr-comment;
+            say " curr-config:  ", $curr-config;
         }
     }
 }
