@@ -2,7 +2,7 @@
 
 use Pod::Load;
 
-my $ifil = "./t/data/slides.pod";
+my $ifil = "./t/data/slides.rakudoc";
 
 if not @*ARGS {
     print qq:to/HERE/;
@@ -31,22 +31,25 @@ else {
 # each =slide until the EOF or the next =slide
 
 class Config {
+    has $.i is required;
+    has @.lines;
+    has %.config;
 }
 
 class Slide {
+    has $.i is required;
     has $.title;
     has @.lines;
     has %.config;
 }
 
+my @configs;
 my @slides;
 
 # recognized chunks
 my $curr-slide   = 0;
 my $curr-comment = 0;
 my $curr-config  = 0;
-
-my %config = %();
 
 my @lines = $pod-fil.IO.lines;
 for @lines.kv -> $i, $v {
@@ -97,10 +100,17 @@ for @lines.kv -> $i, $v {
         # begins a new Slide
         $curr-slide = Slide.new: :$title; # ok
     }
-    when $v ~~ /^ \h* '=for' (\N+) / {
-        my $txt = ~$0;
-        if $txt ~~ /:i configuration / {
-            $curr-config = 1;
+    when $v ~~ /^ \h* '=for' \h+ (\S) [\h+ (\N+)]? / {
+        my $txt  = ~$0;
+        my $txt2 = ~$1;
+
+        # ends any existing Slide
+        if $txt ~~ /:i config / {
+            if $curr-config {
+                @configs.push: $curr-config;
+                $curr-config = 0;
+            }
+            $curr-config = Config.new;
         }
     }
     when $v ~~ /^ \h* '=' (\N+) / {
@@ -118,8 +128,11 @@ for @lines.kv -> $i, $v {
         if $curr-slide {
             $curr-slide.lines.push: $v;
         }
+        elsif $curr-config {
+            $curr-config.lines.push: $v;
+        }
         else {
-            say "Unexpected line number {$i+1}: '$v'";
+            say "Unexpected line number {$i+1} value: '$v'";
             say " curr-slide:   ", $curr-slide;
             say " curr-comment: ", $curr-comment;
             say " curr-config:  ", $curr-config;

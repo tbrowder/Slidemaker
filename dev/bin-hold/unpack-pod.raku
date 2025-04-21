@@ -2,7 +2,7 @@
 
 use Pod::Load;
 
-my $ifil = "./t/data/slides.pod";
+my $ifil = "./t/data/slides.rakudoc";
 
 if not @*ARGS {
     print qq:to/HERE/;

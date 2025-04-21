@@ -10,7 +10,7 @@ my $pod-obj;
 
 # exercise loading the example in resources
 my %rpaths = get-resources-hash;
-my $eg = "example.pod";
+my $eg = "example.rakudoc";
 my $eg-path;
 if %rpaths{$eg}:exists {
    $eg-path = %rpaths{$eg}
