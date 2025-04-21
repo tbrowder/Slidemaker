@@ -86,23 +86,18 @@ for @lines.kv -> $i, $v {
         # ignore inline comment
         next;
     }
-    when $v ~~ /^ \h* '=' [s|S]lide \h+ (\S+) / {
-        my $title = ~$0;
-        unless $title.defined {
-            die "FATAL: No slide title defined at line $line-num";
-        }
-
+    when $v ~~ /^ \h* '=' [s|S]lide / {
         # ends any existing Slide
         if $curr-slide {
             @slides.push: $curr-slide;
             $curr-slide = 0;
         }
         # begins a new Slide
-        $curr-slide = Slide.new: :$title; # ok
+        $curr-slide = Slide.new: :$i;
     }
-    when $v ~~ /^ \h* '=for' \h+ (\S) [\h+ (\N+)]? / {
+    when $v ~~ /^ \h* '=for' \h+ (\S+) [\h+ (\N+)]? / {
         my $txt  = ~$0;
-        my $txt2 = ~$1;
+        my $txt2 = ~$1 if $1.defined;
 
         # ends any existing Slide
         if $txt ~~ /:i config / {
@@ -110,17 +105,28 @@ for @lines.kv -> $i, $v {
                 @configs.push: $curr-config;
                 $curr-config = 0;
             }
-            $curr-config = Config.new;
+            $curr-config = Config.new: :$i;
+        }
+        else {
+            die qq:to/HERE/;
+            FATAL: Unexpected line: 
+                '$txt'
+              at line {$i+1} in file '$pod-fil'.
+            HERE
         }
     }
     when $v ~~ /^ \h* '=' (\N+) / {
-        my $txt = ~$0;
+        my $txt = ~$0.trim;
         if $curr-config {
             # config line is space separated tokens
             my @tokens = $txt.words;
         }
         else {
-            die "FATAL: Unexpected line: '$txt'";
+            die qq:to/HERE/;
+            FATAL: Unexpected line: 
+                '$txt'
+              at line {$i+1} in file '$pod-fil'.
+            HERE
         }
     }
     default {
@@ -131,8 +137,8 @@ for @lines.kv -> $i, $v {
         elsif $curr-config {
             $curr-config.lines.push: $v;
         }
-        else {
-            say "Unexpected line number {$i+1} value: '$v'";
+        elsif $v !~~ /\S/ {
+            say "Expected blank line between known sections at line number {$i+1}";
             say " curr-slide:   ", $curr-slide;
             say " curr-comment: ", $curr-comment;
             say " curr-config:  ", $curr-config;

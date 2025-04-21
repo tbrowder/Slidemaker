@@ -1,4 +1,4 @@
-=begin pod
+=begin rakupod
 
 =head1 NAME
 
@@ -8,7 +8,7 @@ B<Slidemaker> - Provides routines for generating PDF slides from Rakudoc input.
 
 =begin code :lang<raku>
 use Slidemaker;
-$ create-slides <rakudoc file>
+$ parse-slides <rakudoc file>
 $ See file 'MyBriefing.pdf'
 =end code
 
@@ -22,21 +22,23 @@ description:
 =begin pod
 =comment configuration lasts until next configuration block (if any)
 =comment see details for defaults and recognized key/value pairs
-=for configuration :paper<letter> :title-bar-color<blue> :title-bar-height<1>
+=for Config :paper<letter> :title-bar-color<blue> :title-bar-height<1>
 = :dimensions<in>
 = :font<serif> :title-font-size<> :subtitle-font-size<> :font-size<>
 = :margins<1> 
-=comment a '=slide' and its title start a new slide
-=slide Why Linux?
-=subtitle Introduction to the Windows/Mac alternative
+=comment a '=slide' starts a new slide
+=slide 
+=Title Why Linux?
+=Subtitle Introduction to the Windows/Mac alternative
 =author Joey Marshal
 =date 2024-05-10
 =item It's good for you.
 =item It's fun, too!
-=slide Why Linux?
-=subtitle That's all folks!
+=slide 
+=Title Why Linux?
+=Subtitle That's all folks!
 =comment document definition is complete
-=end pod
+=end rakupod
 =end code
 
 Currently, the input document satisfies a basic need for a quick,
@@ -62,4 +64,4 @@ Tom Browder <tbrowder@acm.org>
 This library is free software; you may redistribute it or modify it
 under the Artistic License 2.0.
 
-=end pod
+=end rakupod
