@@ -4,6 +4,7 @@ use Pod::Load;
 
 my $ifil = "./t/data/slides.rakudoc";
 
+my $debug = 0;
 if not @*ARGS {
     print qq:to/HERE/;
     Usage: {$*PROGRAM.basename} <mode>
@@ -30,13 +31,24 @@ else {
 # each chunk consists of the text starting at
 # each =slide until the EOF or the next =slide
 
+sub extact-keys(
+    $text,
+    :$debug,
+    --> Hash
+    ) is export {
+}
+
 class Config {
+    # line index number where found (0-indexed)
     has $.i is required;
+    # raw lines with keyed pairs
     has @.lines;
+    # resulting hash
     has %.config;
 }
 
 class Slide {
+    # line index number where found (0-indexed)
     has $.i is required;
     has $.title;
     has @.lines;
@@ -51,10 +63,15 @@ my $curr-slide   = 0;
 my $curr-comment = 0;
 my $curr-config  = 0;
 
+my $in-prolog    = 1; # becomes zero at first slide
+
 my @lines = $pod-fil.IO.lines;
 for @lines.kv -> $i, $v {
     my $line-num = $i+1;
 
+    when $v ~~ /^:i d/ {
+        ++$debug;
+    }
     when $v ~~ /^ \h* '=begin' \h+ (\N+) / {
         my $txt = ~$0;
         if $txt ~~ /:i comment / {
@@ -149,6 +166,21 @@ for @lines.kv -> $i, $v {
 if $curr-slide {
     @slides.push: $curr-slide;
     $curr-slide = 0;
+}
+
+if $curr-config {
+    @configs.push: $curr-config;
+    $curr-config = 0;
+}
+
+if $debug {
+    say "DEBUG: showing \@slides lines:";
+    for @slides.kv -> $i, $s {
+        say "  slide $i";
+        for $s.lines {
+            "    | ", $_;
+        }
+    }
 }
 
 =finish

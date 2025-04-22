@@ -20,16 +20,27 @@ $ See file 'MyBriefing.pdf'
 DESCRIPTION
 ===========
 
-**Slidemaker** provides a system to create a PDF slide deck from a Rakudoc description. Following is a short example of such a description:
+**Slidemaker** provides a system to create a PDF slide deck from a Rakudoc description. Following is an example of such a description:
 
     =begin pod
-    =comment configuration lasts until next configuration block (if any)
-    =comment see details for defaults and recognized key/value pairs
+
+    =begin comment
+        Config blocks apply to the entire document
+        until the first slide. Then each slide can
+        have its own Config blocks. See details for 
+        defaults and recognized key/value pairs.
+    =end comment
+
     =for Config :paper<letter> :title-bar-color<blue> :title-bar-height<1>
     = :dimensions<in>
     = :font<serif> :title-font-size<> :subtitle-font-size<> :font-size<>
     = :margins<1> 
-    =comment a '=slide' starts a new slide
+
+    =begin comment
+        A '=slide' starts a new slide and subsequent Config entries
+        are constrained to the current slide.
+    =end comment
+
     =slide 
     =Title Why Linux?
     =Subtitle Introduction to the Windows/Mac alternative
@@ -37,11 +48,13 @@ DESCRIPTION
     =date 2024-05-10
     =item It's good for you.
     =item It's fun, too!
+
     =slide 
     =Title Why Linux?
     =Subtitle That's all folks!
     =comment document definition is complete
-    =end rakupod
+
+    =end pod
 
 Currently, the input document satisfies a basic need for a quick, text-based briefing presentation. It can provide:
 
