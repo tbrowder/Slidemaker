@@ -17,6 +17,7 @@
     "Cairo",
     "Pod::Load",
     "Pod::To::PDF",
+    "Pod::To::PDF::Lite",
     "Pod::To::Markdown",
     "Compress::PDF"
   ],
