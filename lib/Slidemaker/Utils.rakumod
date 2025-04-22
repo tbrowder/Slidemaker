@@ -1,4 +1,4 @@
-unit module Utils; # source is copy of: ExampleLib::UseResources;
+unit module Resources; # source is copy of: ExampleLib::UseResources;
 
 #===== exported routines
 sub show-resources(:$debug --> List) is export {

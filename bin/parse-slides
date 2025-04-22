@@ -4,34 +4,61 @@ use Pod::Load;
 
 my $ifil = "./t/data/slides.rakudoc";
 
-my $debug = 0;
 if not @*ARGS {
     print qq:to/HERE/;
-    Usage: {$*PROGRAM.basename} <mode>
+    Usage: {$*PROGRAM.basename} <mode> [options]
 
     Modes:
+
       go     - Converts file '$ifil' to a PDF slide deck
+
       <file> - Converts file '<file>' to a PDF slide deck
+
+      eg     - Downloads the example slide deck input
+                 'slides.rakudoc'
+
+    Options:
+
+      debug  - For developers
 
     HERE
     exit;
 }
 
 my $pod-fil;
+my $debug = 0;
 
-my $arg = @*ARGS.head;
+my @args = @*ARGS;
+my $arg  = @args.head;
 if $arg.IO.r {
     $pod-fil = $arg;
+    @args.shift; # to consider more args
 }
 else {
     $pod-fil = $ifil;
+}
+
+for @args {
+    when /^ :i d / {
+        ++$debug;
+    }
+    when /^ :i eg / {
+        say "Downloading file 'slides.rakudoc'";
+        exit;
+        =begin comment
+        # get the example file from '/resources'
+        $ifil = "example.rakudoc";
+        my $str = get-content "./resources/$ifil";
+        spurt "example.rakudoc", $str;
+        =end comment
+    }
 }
 
 # read the input file and split into slide chunks
 # each chunk consists of the text starting at
 # each =slide until the EOF or the next =slide
 
-sub extact-keys(
+sub extract-keys(
     $text,
     :$debug,
     --> Hash
