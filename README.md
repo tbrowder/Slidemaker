@@ -24,22 +24,17 @@ DESCRIPTION
 
     =begin pod
 
-    =begin comment
-        Config blocks apply to the entire document
-        until the first slide. Then each slide can
-        have its own Config blocks. See details for 
-        defaults and recognized key/value pairs.
-    =end comment
+    # Config entries apply to the entire document
+    # until the first slide. Then each slide can
+    # have its own Config entries. 
 
     =for Config :paper<letter> :title-bar-color<blue> :title-bar-height<1>
     = :dimensions<in>
     = :font<serif> :title-font-size<> :subtitle-font-size<> :font-size<>
     = :margins<1> 
 
-    =begin comment
-        A '=slide' starts a new slide and subsequent Config entries
-        are constrained to the current slide.
-    =end comment
+    # A '=slide' starts a new slide and subsequent Config entries
+    # are constrained to the current slide.
 
     =slide 
     =Title Why Linux?
@@ -52,9 +47,12 @@ DESCRIPTION
     =slide 
     =Title Why Linux?
     =Subtitle That's all folks!
-    =comment document definition is complete
+
+    # Document definition is complete
 
     =end pod
+
+See slide input format details at [SlideFormats](SlideFormats.md) for defaults and recognized key/value pairs.
 
 Currently, the input document satisfies a basic need for a quick, text-based briefing presentation. It can provide:
 
