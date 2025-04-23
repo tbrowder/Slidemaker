@@ -1,6 +1,7 @@
 #!/usr/bin/env raku
 
 use Pod::Load;
+use Slidemaker::Resources;
 
 my $ifil = "./t/data/slides.rakudoc";
 
@@ -43,14 +44,18 @@ for @args {
         ++$debug;
     }
     when /^ :i eg / {
+        my $f = 'slides.rakudoc';
         say "Downloading file 'slides.rakudoc'";
-        exit;
-        =begin comment
+        #exit;
+        #=begin comment
         # get the example file from '/resources'
-        $ifil = "example.rakudoc";
-        my $str = get-content "./resources/$ifil";
-        spurt "example.rakudoc", $str;
-        =end comment
+        #$ifil = "example.rakudoc";
+        #my $str = get-content "./resources/$ifil";
+        my $str = get-content "./resources/$f";
+        #spurt "example.rakudoc", $str;
+        spurt $f, $str;
+        #=end comment
+        exit;
     }
 }
 

@@ -30,8 +30,8 @@
     "Slidemaker::Action": "lib/Slidemaker/Action.rakumod",
     "Slidemaker::PDF": "lib/Slidemaker/PDF.rakumod",
     "Slidemaker::ParsePod": "lib/Slidemaker/ParsePod.rakumod",
-    "Slidemaker::Slide": "lib/Slidemaker/Slide.rakumod",
-    "Slidemaker::Utils": "lib/Slidemaker/Utils.rakumod"
+    "Slidemaker::Resources": "lib/Slidemaker/Resources.rakumod",
+    "Slidemaker::Slide": "lib/Slidemaker/Slide.rakumod"
   },
   "resources": [
     "slides.rakudoc",
