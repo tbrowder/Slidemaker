@@ -88,6 +88,7 @@ class Slide {
 
 my @prologue-raw-lines;
 my @slides; # array of Slides
+my @unknown;
 
 # recognized chunks
 my $curr-slide   = 0;
@@ -96,6 +97,10 @@ my $prologue     = 1; # becomes zero at first slide
 my @lines = $pod-fil.IO.lines;
 LINE: for @lines.kv -> $i, $v {
     my $line-num = $i+1;
+    if $debug {
+        say "DEBUG: line {$i+1}: $v";
+    }
+
     if $v ~~ /^ \h* '=' [s|S]lide / {
         # ends prologue
         $prologue = 0 if $prologue;
@@ -116,10 +121,22 @@ LINE: for @lines.kv -> $i, $v {
         @prologue-raw-lines.push: $v;
         next LINE;
     }
-    say qq:to/HERE/;
-    WARNING: unhandled line {$i+1} with value:
+    die qq:to/HERE/;
+    FATAL: unhandled line {$i+1} with value:
         |$v|
     HERE
+}
+
+if $debug {
+    say "DEBUG: showing collected chunks";
+    say "   prologue-raw-lines:";
+    say "   |$_|" for @prologue-raw-lines;
+    say "   Slide contents:";
+    for @slides.kv -> $i, $s {
+        say "      {$i+1} :";
+        say "        raw lines:";
+        say "          |$_|" for $s.raw-lines;
+    }
 }
 
 # tmp end
