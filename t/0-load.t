@@ -6,7 +6,7 @@ Slidemaker
 Slidemaker::PDF
 Slidemaker::ParsePod
 Slidemaker::Slide
-Slidemaker::Utils
+Slidemaker::Resources
 >;
 
 plan @modules.elems + 1;
