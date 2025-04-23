@@ -1,9 +1,10 @@
 #use Pod::To::Anything;
 #use Pod::To::Anything::Subsets;
 
-unit class Slidemaker::ParsePod; #  does Pod::To::Anything;
+unit module Slidemaker::RakudocUtils; 
 
 =finish
+# ParsePod; #  does Pod::To::Anything;
 #| A base role for writing a Perl 6 Pod formatters with. It contains render
 #| methods to take care of some plumbing efforts, so all you need to do is
 #| define some render methods for the Pod blocks you want to give special

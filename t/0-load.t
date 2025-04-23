@@ -4,7 +4,7 @@ use Pod::Load;
 my @modules = <
 Slidemaker
 Slidemaker::PDF
-Slidemaker::ParsePod
+Slidemaker::RakudocUtils
 Slidemaker::Slide
 Slidemaker::Resources
 >;

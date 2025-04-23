@@ -3,6 +3,7 @@
 use Pod::Load;
 use Slidemaker;
 use Slidemaker::Resources;
+use Slidemaker::RakudocUtils;
 
 my $ifil = "slides.rakudoc";
 

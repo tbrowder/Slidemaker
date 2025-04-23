@@ -6,6 +6,7 @@ use Abbreviations;
 
 use Slidemaker::Resources;
 use Slidemaker::Slide;
+use Slidemaker::RakudocUtils;
 
 my @slides;
 my $podfile;
