@@ -3,7 +3,7 @@ use Test;
 use Pod::Load;
 
 use Slidemaker;
-use Slidemaker::Utils;
+use Slidemaker::RakudocUtils;
 
 my $pod-obj;
 
