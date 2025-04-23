@@ -29,6 +29,7 @@ if not @*ARGS {
 my $pod-fil;
 my $debug = 0;
 
+# need to modify args so make a copy
 my @args = @*ARGS;
 my $arg  = @args.head;
 if $arg.IO.r {
@@ -36,9 +37,10 @@ if $arg.IO.r {
     @args.shift; # to consider more args
 }
 else {
-    $pod-fil = $ifil;
+    $pod-fil = $ifil; # take the default
 }
 
+# evaluate any args remaining
 for @args {
     when /^ :i d / {
         ++$debug;
@@ -46,6 +48,7 @@ for @args {
     when /^ :i eg / {
         my $f = 'slides.rakudoc';
         say "Downloading file 'slides.rakudoc'";
+
         #exit;
         #=begin comment
         # get the example file from '/resources'
@@ -55,7 +58,8 @@ for @args {
         #spurt "example.rakudoc", $str;
         spurt $f, $str;
         #=end comment
-        exit;
+
+        exit; # <== dont't forget this!!
     }
 }
 
@@ -95,7 +99,7 @@ my $curr-slide   = 0;
 my $curr-comment = 0;
 my $curr-config  = 0;
 
-my $in-prolog    = 1; # becomes zero at first slide
+my $prologue     = 1; # becomes zero at first slide
 
 my @lines = $pod-fil.IO.lines;
 for @lines.kv -> $i, $v {
@@ -136,6 +140,9 @@ for @lines.kv -> $i, $v {
         next;
     }
     when $v ~~ /^ \h* '=' [s|S]lide / {
+        # ends prologue
+        $prologue = 0 if $prologue;
+
         # ends any existing Slide
         if $curr-slide {
             @slides.push: $curr-slide;
@@ -144,24 +151,33 @@ for @lines.kv -> $i, $v {
         # begins a new Slide
         $curr-slide = Slide.new: :$i;
     }
+    # beginning of a Config block for the prologue
+    # OR an existing slide
     when $v ~~ /^ \h* '=for' \h+ (\S+) [\h+ (\N+)]? / {
-        my $txt  = ~$0;
-        my $txt2 = ~$1 if $1.defined;
+        # intended for Config info either in the 
+        # prologue or the existing slide
+        my $typ  = ~$0;
+        my $txt  = ~$1 if $1.defined;
 
-        # ends any existing Slide
-        if $txt ~~ /:i config / {
+        if $typ !~~ /:i config / {
+            die qq:to/HERE/;
+            FATAL: Unexpected line: 
+                '$typ'
+              at line {$i+1} in file '$pod-fil'.
+            HERE
+        }
+
+        # only one Config allowed for the prologue or the slide
+        # so we keep reading lines until done
+        if $curr-slide {
+            ; # ok
+        }
+        elsif $prologue {
             if $curr-config {
                 @configs.push: $curr-config;
                 $curr-config = 0;
             }
             $curr-config = Config.new: :$i;
-        }
-        else {
-            die qq:to/HERE/;
-            FATAL: Unexpected line: 
-                '$txt'
-              at line {$i+1} in file '$pod-fil'.
-            HERE
         }
     }
     when $v ~~ /^ \h* '=' (\N+) / {
@@ -215,6 +231,7 @@ if $debug {
     }
 }
 
+# end of active code for now
 =finish
 
 

@@ -1,0 +1,321 @@
+#!/usr/bin/env raku
+
+use Pod::Load;
+use Slidemaker;
+use Slidemaker::Resources;
+
+my $ifil = "slides.rakudoc";
+
+# parse-slides2
+
+if not @*ARGS {
+    print qq:to/HERE/;
+    Usage: {$*PROGRAM.basename} <mode> [options]
+
+    Modes:
+
+      go     - Converts file '$ifil' to a PDF slide deck
+
+      file=X - Where X is the path to a Rakudoc file to
+               be converted to a PDF slide deck
+
+      eg     - Downloads the example slide deck input
+                 '$ifil'
+
+    Options:
+
+      debug  - For developers
+
+    HERE
+    exit;
+}
+
+my $pod-fil;
+my $debug = 0;
+
+for @*ARGS  {
+    when /^ :i g o? / {
+        $pod-fil = $ifil;
+    }
+    when /^ :i 'file=' (\S+) / {
+        $pod-fil = ~$0.IO;
+    }
+    when /^ :i d / {
+        ++$debug;
+    }
+    when /^ :i eg / {
+        my $f = $ifil;
+        say "Downloading file '$f'";
+        my $str = get-content "./resources/$f";
+        spurt $f, $str;
+        exit; # <== dont't forget this!!
+    }
+    default {
+        say "FATAL: Unknown arg '$_'; exiting...";
+        exit;
+    }
+}
+
+# read the input file and split into:
+#   a prologue
+#   slide chunks
+# each chunk consists of the text starting at
+# each =slide until the EOF or the next =slide
+
+sub extract-keys(
+    $text,
+    :$debug,
+    --> Hash
+    ) is export {
+}
+
+class Config {
+    # line index number where found (0-indexed)
+    has $.i is required;
+    # raw lines with keyed pairs
+    has @.lines;
+    # resulting hash
+    has %.config;
+}
+
+class Slide {
+    # line index number where found (0-indexed)
+    has $.i is required;
+    has $.title;
+    has @.raw-lines; # as input
+    has %.config;
+}
+
+my @prologue-raw-lines;
+my @slides; # array of Slides
+
+# recognized chunks
+my $curr-slide   = 0;
+my $prologue     = 1; # becomes zero at first slide
+
+my @lines = $pod-fil.IO.lines;
+LINE: for @lines.kv -> $i, $v {
+    my $line-num = $i+1;
+    if $v ~~ /^ \h* '=' [s|S]lide / {
+        # ends prologue
+        $prologue = 0 if $prologue;
+        # ends any existing Slide
+        if $curr-slide {
+            @slides.push: $curr-slide;
+            $curr-slide = 0;
+        }
+        # begins a new Slide
+        $curr-slide = Slide.new: :$i;
+        next LINE;
+    }
+    if $curr-slide {
+        $curr-slide.raw-lines.push: $v;
+        next LINE;
+    }
+    if $prologue {
+        @prologue-raw-lines.push: $v;
+        next LINE;
+    }
+    say qq:to/HERE/;
+    WARNING: unhandled line {$i+1} with value:
+        |$v|
+    HERE
+}
+
+# tmp end
+=finish
+
+=begin comment
+    when $v ~~ /^ \h* '=begin' \h+ (\N+) / {
+        my $txt = ~$0;
+        if $txt ~~ /:i comment / {
+            if $curr-comment {
+                die "FATAL: Nested comments not allowed":
+            }
+            $curr-comment = 1;
+        }
+        elsif $txt ~~ /:i raku? pod / {
+            next; # ignore
+        }
+    }
+    when $v ~~ /^ \h* '=end' \h+ (\N+) / {
+        my $txt = ~$0;
+        if $txt ~~ /:i comment / {
+            if $curr-comment {
+                $curr-comment = 0;
+            }
+            else {
+                die "FATAL: End comment with no matching begin";
+            }
+        }
+        elsif $txt ~~ /:i raku? pod / {
+            next; # ignore
+        }
+    }
+    when $v ~~ /^ \h* '=comment' \h+ (\N+) / {
+        my $txt = ~$0;
+        # ignore inline comment
+        next;
+    }
+
+    # beginning of a Config block for the prologue
+    # OR an existing slide
+    when $v ~~ /^ \h* '=for' \h+ (\S+) [\h+ (\N+)]? / {
+        # intended for Config info either in the 
+        # prologue or the existing slide
+        my $typ  = ~$0;
+        my $txt  = ~$1 if $1.defined;
+
+        if $typ !~~ /:i config / {
+            die qq:to/HERE/;
+            FATAL: Unexpected line: 
+                '$typ'
+              at line {$i+1} in file '$pod-fil'.
+            HERE
+        }
+
+        # only one Config allowed for the prologue or the slide
+        # so we keep reading lines until done
+        if $curr-slide {
+            ; # ok
+        }
+        elsif $prologue {
+            if $curr-config {
+                @configs.push: $curr-config;
+                $curr-config = 0;
+            }
+            $curr-config = Config.new: :$i;
+        }
+    }
+    when $v ~~ /^ \h* '=' (\N+) / {
+        my $txt = ~$0.trim;
+        if $curr-config {
+            # config line is space separated tokens
+            my @tokens = $txt.words;
+        }
+        else {
+            die qq:to/HERE/;
+            FATAL: Unexpected line: 
+                '$txt'
+              at line {$i+1} in file '$pod-fil'.
+            HERE
+        }
+    }
+    default {
+        next if $curr-comment;
+        if $curr-slide {
+            $curr-slide.lines.push: $v;
+        }
+        elsif $curr-config {
+            $curr-config.lines.push: $v;
+        }
+        elsif $v !~~ /\S/ {
+            say "Expected blank line between known sections at line number {$i+1}";
+            say " curr-slide:   ", $curr-slide;
+            say " curr-comment: ", $curr-comment;
+            say " curr-config:  ", $curr-config;
+        }
+    }
+}
+=end comment
+
+if $curr-slide {
+    @slides.push: $curr-slide;
+    $curr-slide = 0;
+}
+
+if $curr-config {
+    @configs.push: $curr-config;
+    $curr-config = 0;
+}
+
+if $debug {
+    say "DEBUG: showing \@slides lines:";
+    for @slides.kv -> $i, $s {
+        say "  slide $i";
+        for $s.lines {
+            "    | ", $_;
+        }
+    }
+}
+
+# end of active code for now
+=finish
+
+
+my @roots = load $pod-fil;
+my $nr = @roots.elems;
+if $nr > 1 {
+    print qq:to/HERE/;
+    WARNING: This input pod file has $nr roots. This program
+    is not meant to handle a pod file with more than one pod
+    root. 
+
+    Exiting.
+    HERE
+    exit;
+}
+
+
+my ($p, @c, %h);
+$p = @roots.head;
+
+my @pods;
+@pods.unshift: $p;
+my $idx = 0;
+while @pods {
+    $p = @pods.pop;
+    %h = $p.config if $p.config;
+    @c = $p.contents if $p.contents;
+    for %h.kv -> $k, $v {
+        say "config key: $k";
+        say "  value: $v";
+    }
+    for @c -> $c {
+        my $typ = is-pod($c);
+        unless $typ {
+            say "Found content $idx: $c";
+            next;
+        }
+        ++$idx;
+        say "Found a Pod object $idx: $typ";
+        with $typ {
+            when /:i named / {
+                my $nam = $c.name.lc;
+                say "  Its name is '$nam'";
+                if $nam eq 'slide' {
+                    say "Starting a new slide...";
+                }
+            }
+            when /:i fc / {
+                my $fc = $c.type;
+                say "  Its type is '$fc'";
+                my @arr = $c.meta;
+                say "  Its meta is '{@arr.gist}'";
+            }
+            when /:i item / {
+                my $lvl = $c.level;
+                say "  Its level is '$lvl'";
+            }
+        }
+        @pods.unshift: $c;
+    }
+}
+
+sub is-pod($o) {
+    my $res = 0;
+    with $o {
+        when Pod::Block::Para       { $res = <Para>       }
+        when Pod::Block::Named      { $res = <Named>      }
+        when Pod::Block::Declarator { $res = <Declarator> }
+        when Pod::Block::Code       { $res = <Code>       }
+        when Pod::Block::Comment    { $res = <Comment>    }
+        when Pod::Block::Table      { $res = <Table>      }
+        when Pod::Heading           { $res = <Hdg>        }
+        when Pod::Item              { $res = <Item>       }
+        when Pod::Defn              { $res = <Defn>       }
+        when Pod::FormattingCode    { $res = <FC>         }
+        default                     { $res = <Unknown>    }
+    }
+    $res
+}
