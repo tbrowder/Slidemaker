@@ -101,7 +101,9 @@ LINE: for @lines.kv -> $i, $v {
         say "DEBUG: line {$i+1}: $v";
     }
 
-    if $v ~~ /^ \h* '=' [s|S]lide / {
+    # lines with a leading '=slide' need checking
+    # all others go into prolog or a current slide
+    if $v ~~ /^ :i \h* '=' slide / {
         # ends prologue
         $prologue = 0 if $prologue;
         # ends any existing Slide
@@ -113,11 +115,11 @@ LINE: for @lines.kv -> $i, $v {
         $curr-slide = Slide.new: :$i;
         next LINE;
     }
-    if $curr-slide {
+    elsif $curr-slide {
         $curr-slide.raw-lines.push: $v;
         next LINE;
     }
-    if $prologue {
+    elsif $prologue {
         @prologue-raw-lines.push: $v;
         next LINE;
     }
@@ -125,6 +127,12 @@ LINE: for @lines.kv -> $i, $v {
     FATAL: unhandled line {$i+1} with value:
         |$v|
     HERE
+}
+
+# don't forget the last slide!!!
+if $curr-slide {
+    @slides.push: $curr-slide;
+    $curr-slide = 0;
 }
 
 if $debug {
