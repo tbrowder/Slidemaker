@@ -1,2 +1,2 @@
-unit class Slide;
+unit class Slidemaker::Slide;
 

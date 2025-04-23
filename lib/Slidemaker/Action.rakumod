@@ -1,4 +1,4 @@
-unit module Slidemake::Action;
+unit module Slidemaker::Action;
 
 =begin comment
 multi sub action() is export {
