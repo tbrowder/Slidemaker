@@ -4,7 +4,7 @@ use Pod::To::PDF;
 use Pod::To::Markdown;
 use Abbreviations;
 
-use Slidemaker::Utils;
+use Slidemaker::Resources;
 use Slidemaker::Slide;
 
 my @slides;
