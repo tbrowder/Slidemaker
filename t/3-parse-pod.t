@@ -3,10 +3,6 @@ use Test;
 use Pod::Load;
 
 use Slidemaker;
-use Slidemaker::ParsePod;
-
-my $p = Slidemaker::ParsePod.new;
-isa-ok $p, Slidemaker::ParsePod;
 
 my $f1 = "t/data/slides.rakudoc";
 my $pod = (load $f1).head;
