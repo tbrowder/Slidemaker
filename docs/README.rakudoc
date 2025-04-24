@@ -1,4 +1,4 @@
-=begin rakupod
+=begin pod
 
 =head1 NAME
 
@@ -76,4 +76,4 @@ Tom Browder <tbrowder@acm.org>
 This library is free software; you may redistribute it or modify it
 under the Artistic License 2.0.
 
-=end rakupod
+=end pod
