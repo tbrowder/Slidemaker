@@ -4,7 +4,8 @@ use Pod::Load;
 use File::Temp;
 
 use Slidemaker;
-use Slidemaker::Utils;
+use Slidemaker::Resources;
+use Slidemaker::RakudocUtils;
 
 my $pod-obj;
 

@@ -9,8 +9,6 @@ Slidemaker::Slide
 Slidemaker::Resources
 >;
 
-plan @modules.elems + 1;
-
 for @modules {
     use-ok $_; say "Module '$_', use-ok";
 }
@@ -19,3 +17,4 @@ lives-ok {
     my @pods = load "docs/README.rakudoc";
 }, "checking rakudoc";
 
+done-testing;
