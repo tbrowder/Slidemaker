@@ -6,6 +6,7 @@ use Slidemaker::Resources;
 use Slidemaker::RakudocUtils;
 
 my $ifil = "slides.rakudoc";
+my $ofil = $ifil.split(".").head ~ ".pdf";
 
 # parse-slides2
 
@@ -16,6 +17,7 @@ if not @*ARGS {
     Modes:
 
       go     - Converts file '$ifil' to a PDF slide deck
+                 named '$ofil'
 
       file=X - Where X is the path to a Rakudoc file to
                be converted to a PDF slide deck
@@ -57,6 +59,7 @@ for @*ARGS  {
     }
 }
 
+$ofil = $pod-fil.split(".").head ~ ".pdf";
 # read the input file and split into:
 #   a prologue
 #   slide chunks
@@ -147,6 +150,13 @@ if $debug {
         say "          |$_|" for $s.raw-lines;
     }
 }
+my $config = create-config @prologue-raw-lines;
+# create the individual slides as PDF files in tempdir
+my @slide-pdfs = slides2pdf @slides, :$config, :$debug;
+# the final pdf file
+combine-slide-pdfs @slide-pdfs;
+say "See PDF slide deck: $ofil";
+
 
 # tmp end
 =finish

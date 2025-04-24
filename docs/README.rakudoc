@@ -50,6 +50,9 @@ description:
 =end pod
 =end code
 
+The process currently uses B<Pod::To::PDF::Lite> to render the
+Rakudoc slides to individual pages in a single PDF document.
+
 See slide input format details at L<SlideFormats|SlideFormats.md> for 
 defaults and recognized key/value pairs.
 

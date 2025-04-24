@@ -4,6 +4,18 @@ use PDF::Lite;
 use PDF::Content::Page :PageSizes, :&to-landscape;
 use PDF::Content::Font;
 
+sub combine-pdfs(
+    @slides,
+    :$config,
+    :$debug,
+    --> IO::Path
+    ) is export {
+
+    # each slide object creates a separate PDF::Lite file
+    for @slides -> $s {
+    }
+}
+
 =begin comment
 
 my %m = %(PageSizes.enums);
