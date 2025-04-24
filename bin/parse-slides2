@@ -4,6 +4,8 @@ use Pod::Load;
 use Slidemaker;
 use Slidemaker::Resources;
 use Slidemaker::RakudocUtils;
+use Slidemaker::PDF;
+use Slidemaker::Classes;
 
 my $ifil = "slides.rakudoc";
 my $ofil = $ifil.split(".").head ~ ".pdf";
@@ -73,6 +75,8 @@ sub extract-keys(
     ) is export {
 }
 
+=begin comment
+# see file lib/Slidemaker/Classes.rakumod
 class Config {
     # line index number where found (0-indexed)
     has $.i is required;
@@ -81,7 +85,10 @@ class Config {
     # resulting hash
     has %.config;
 }
+=end comment
 
+=begin comment
+# see file lib/Slidemaker/Classes.rakumod
 class Slide {
     # line index number where found (0-indexed)
     has $.i is required;
@@ -89,6 +96,7 @@ class Slide {
     has @.raw-lines; # as input
     has %.config;
 }
+=end comment
 
 my @prologue-raw-lines;
 my @slides; # array of Slides
@@ -116,7 +124,8 @@ LINE: for @lines.kv -> $i, $v {
             $curr-slide = 0;
         }
         # begins a new Slide
-        $curr-slide = Slide.new: :$i;
+        #$curr-slide = Slide.new: :$i;
+        $curr-slide = Slidemaker::Classes::Slide.new: :$i;
         next LINE;
     }
     elsif $curr-slide {
@@ -150,11 +159,18 @@ if $debug {
         say "          |$_|" for $s.raw-lines;
     }
 }
+
+# see file lib/*/RakudocUtils
+# also see file lib/*/Classes
 my $config = create-config @prologue-raw-lines;
+
 # create the individual slides as PDF files in tempdir
+# see file lib/*/PDF
 my @slide-pdfs = slides2pdf @slides, :$config, :$debug;
+
 # the final pdf file
-combine-slide-pdfs @slide-pdfs;
+slides2pdf @slide-pdfs, :$ofil, :$debug;
+
 say "See PDF slide deck: $ofil";
 
 

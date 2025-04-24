@@ -1,2 +1,0 @@
-unit class Slidemaker::Slide;
-

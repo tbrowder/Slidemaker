@@ -3,18 +3,43 @@ unit module Slidemaker::PDF;
 use PDF::Lite;
 use PDF::Content::Page :PageSizes, :&to-landscape;
 use PDF::Content::Font;
+use Pod::To::PDF::Lite;
 
-sub combine-pdfs(
-    @slides,
-    :$config,
-    :$debug,
-    --> IO::Path
+use Compress::PDF;
+
+use Slidemaker::Classes;
+
+sub slide2pdf(
+    #Slidemaker::Slide $slide,
+    Slide $slide,
+    Config :$config,
+    --> PDF::Lite
+    ) is export {
+}
+
+sub slides2pdf(
+    # combines into one, compressed PDF file
+    @slides-pdf,  # PDF objects (one-page each)
+    --> PDF::Lite
     ) is export {
 
     # each slide object creates a separate PDF::Lite file
-    for @slides -> $s {
+    for @slides-pdf -> $s {
     }
 }
+
+=begin comment
+sub combine-pdfs(
+    @slides-pdf,  # PDF objects (one-page each)
+    :$debug,
+    --> PDF::Lite
+    ) is export {
+
+    # each slide object creates a separate PDF::Lite file
+    for @slides-pdf -> $s {
+    }
+}
+=end comment
 
 =begin comment
 

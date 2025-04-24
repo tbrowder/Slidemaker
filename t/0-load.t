@@ -3,14 +3,17 @@ use Pod::Load;
 
 my @modules = <
 Slidemaker
+Slidemaker::Action
 Slidemaker::PDF
 Slidemaker::RakudocUtils
-Slidemaker::Slide
+Slidemaker::Classes
 Slidemaker::Resources
 >;
 
-for @modules {
-    use-ok $_; say "Module '$_', use-ok";
+subtest {
+    for @modules {
+        use-ok $_; 
+    }
 }
 
 lives-ok {

@@ -1,8 +1,5 @@
 [![Actions Status](https://github.com/tbrowder/Slidemaker/actions/workflows/linux.yml/badge.svg)](https://github.com/tbrowder/Slidemaker/actions) [![Actions Status](https://github.com/tbrowder/Slidemaker/actions/workflows/macos.yml/badge.svg)](https://github.com/tbrowder/Slidemaker/actions) [![Actions Status](https://github.com/tbrowder/Slidemaker/actions/workflows/windows.yml/badge.svg)](https://github.com/tbrowder/Slidemaker/actions)
 
-rakupod
-=======
-
 NAME
 ====
 
@@ -51,6 +48,8 @@ DESCRIPTION
     # Document definition is complete
 
     =end pod
+
+The process currently uses **Pod::To::PDF::Lite** to render the Rakudoc slides to individual pages in a single PDF document.
 
 See slide input format details at [SlideFormats](SlideFormats.md) for defaults and recognized key/value pairs.
 

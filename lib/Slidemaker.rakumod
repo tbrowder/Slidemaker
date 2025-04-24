@@ -5,7 +5,7 @@ use Pod::To::Markdown;
 use Abbreviations;
 
 use Slidemaker::Resources;
-use Slidemaker::Slide;
+use Slidemaker::Classes;
 use Slidemaker::RakudocUtils;
 
 my @slides;
