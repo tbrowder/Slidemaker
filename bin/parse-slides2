@@ -1,9 +1,8 @@
-#!/usr/bin/env raku
-
 use Pod::Load;
 use File::Temp;
 use PDF::Lite;
 use Pod::To::PDF::Lite;
+use PDF::Font::Loader :load-font;
 
 use Slidemaker;
 use Slidemaker::Resources;
@@ -175,6 +174,9 @@ my $pod = @s.join("\n");
 $pod ~= "\n"; # avoid "neol" tag
 @pods.push: $pod; # the default Config
 
+# the base PDF file
+my PDF::Lite $pdf0 .= new;
+
 # then the slides get the same treatment
 for @slides {
     @s = $_.raw-lines;
@@ -193,17 +195,25 @@ for @slides {
 for @pods.kv -> $i, $v {
     spurt "chunk$i.txt".IO, $v
 }
-say "See debug pod text chunks: chunkN.txt";
+say "See debug pod text chunks: 'chunkN.txt'";
 
 # transform them into PDF files with default Pod::To::PDF
+# options for sub pod2pdf:
+#   :$width, :$height # default: 612 x 792 [Letter: Portrait]
 for @pods.kv -> $i, $v {
     my $p = load $v;
-    my PDF::Lite $pdf = pod2pdf $p;
-    $pdf.save-as: "chunk$i.pdf";
+    # we want landscape orientation, fake it:
+    #   :margin default: 20
+    # for @fonts need to use PDF::Font::Loader
+    #   Hash :@fonts (array of hashes: key: path; value: attribut: :bold, :italic, 
+    #             :mono
+    my PDF::Lite $pdf = pod2pdf $p, :pdf($pdf0),
+                        :width(792), :height(612), :margin(72);
+    #$pdf.save-as: "chunk$i.pdf";
 }
-say "See debug PDF files: chunkN.pdf";
-
-#say "See PDF slide deck: $ofil";
+say "See debug PDF files: 'chunkN.pdf'";
+$pdf0.save-as: $ofil;
+say "See PDF slide deck: '$ofil'";
 
 =finish
 

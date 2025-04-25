@@ -4,7 +4,7 @@ rudimentary generation of simple slides, letters, and articles.
 Use the following as test beds and use soonish:
 
 slides: Why Linux
-letter: Handock
+letter: Hancock
 
 Parse with parser used with Coke's text test.
 See /dev dir in FontFactory
