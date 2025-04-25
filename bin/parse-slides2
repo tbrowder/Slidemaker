@@ -43,7 +43,13 @@ my $debug = 0;
 
 for @*ARGS  {
     when /^ :i g o? / {
+        unless $ifil.IO.f {
+            say "Downloading file '$ifil'";
+            my $str = get-content "./resources/$ifil";
+            spurt $ifil, $str;
+        }
         $pod-fil = $ifil;
+        
     }
     when /^ :i 'file=' (\S+) / {
         $pod-fil = ~$0.IO;
