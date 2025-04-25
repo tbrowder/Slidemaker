@@ -3,6 +3,21 @@
 
 unit module Slidemaker::RakudocUtils; 
 
+use Slidemaker::Classes;
+
+sub extract-keys(
+    $text,
+    :$debug,
+    --> Hash
+    ) is export {
+}
+
+sub create-config(
+    @prologue-raw-lines;
+    --> Config
+    ) is export {
+}
+
 =finish
 # ParsePod; #  does Pod::To::Anything;
 #| A base role for writing a Perl 6 Pod formatters with. It contains render

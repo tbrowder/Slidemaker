@@ -7,19 +7,24 @@ use Pod::To::PDF::Lite;
 
 use Compress::PDF;
 
+use Slidemaker::RakudocUtils;
 use Slidemaker::Classes;
 
 sub slide2pdf(
-    #Slidemaker::Slide $slide,
     Slide $slide,
     Config :$config,
+    :$debug,
     --> PDF::Lite
     ) is export {
 }
 
+# my @slide-pdfs = slides2pdf @slides, :$config, :$debug;
 sub slides2pdf(
     # combines into one, compressed PDF file
     @slides-pdf,  # PDF objects (one-page each)
+    Config :$config!,
+    :$ofil!,
+    :$debug,
     --> PDF::Lite
     ) is export {
 

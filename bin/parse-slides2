@@ -1,6 +1,10 @@
 #!/usr/bin/env raku
 
 use Pod::Load;
+use File::Temp;
+use PDF::Lite;
+use Pod::To::PDF::Lite;
+
 use Slidemaker;
 use Slidemaker::Resources;
 use Slidemaker::RakudocUtils;
@@ -67,13 +71,6 @@ $ofil = $pod-fil.split(".").head ~ ".pdf";
 #   slide chunks
 # each chunk consists of the text starting at
 # each =slide until the EOF or the next =slide
-
-sub extract-keys(
-    $text,
-    :$debug,
-    --> Hash
-    ) is export {
-}
 
 =begin comment
 # see file lib/Slidemaker/Classes.rakumod
@@ -160,16 +157,66 @@ if $debug {
     }
 }
 
+# use what we have:
+# create the complete pod file for each class, start with prologue:
+my @pods;
+my @s = @prologue-raw-lines;
+#unless @s.head ~~ /^ \h* '=begin' \h+ [pod|pod6|rakupod|rakudok] / {
+# TODO this is too fragile, create a sub to make it robust:
+#   strip # comments, then leading blank lines
+#   work from the bottom, do the same in reverse
+unless @s.head ~~ /^ \h* '=begin' \h+ pod \h* $/ {
+    unshift @s, "=begin pod";
+}
+unless @s.tail ~~ /^ \h* '=end' \h+ pod \h* $/ {
+    push @s, "=end pod";
+}
+my $pod = @s.join("\n");
+$pod ~= "\n"; # avoid "neol" tag
+@pods.push: $pod; # the default Config
+
+# then the slides get the same treatment
+for @slides {
+    @s = $_.raw-lines;
+    unless @s.head ~~ /^ \h* '=begin' \h+ pod \h* $/ {
+        unshift @s, "=begin pod";
+    }
+    unless @s.tail ~~ /^ \h* '=end' \h+ pod \h* $/ {
+        push @s, "=end pod";
+    }
+    $pod = @s.join("\n");
+    $pod ~= "\n"; # avoid "neol" tag
+    @pods.push: $pod; # the default Config
+}
+
+# transform them into pod text chunks for QC
+for @pods.kv -> $i, $v {
+    spurt "chunk$i.txt".IO, $v
+}
+say "See debug pod text chunks: chunkN.txt";
+
+# transform them into PDF files with default Pod::To::PDF
+for @pods.kv -> $i, $v {
+    my $p = load $v;
+    my PDF::Lite $pdf = pod2pdf $p;
+    $pdf.save-as: "chunk$i.pdf";
+}
+say "See debug PDF files: chunkN.pdf";
+
+#say "See PDF slide deck: $ofil";
+
+=finish
+
 # see file lib/*/RakudocUtils
 # also see file lib/*/Classes
-my $config = create-config @prologue-raw-lines;
+my Config $config = create-config @prologue-raw-lines;
 
 # create the individual slides as PDF files in tempdir
 # see file lib/*/PDF
 my @slide-pdfs = slides2pdf @slides, :$config, :$debug;
 
 # the final pdf file
-slides2pdf @slide-pdfs, :$ofil, :$debug;
+slides2pdf @slide-pdfs, :$ofil, :$config, :$debug;
 
 say "See PDF slide deck: $ofil";
 
