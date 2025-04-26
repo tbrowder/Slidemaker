@@ -10,6 +10,18 @@ use Compress::PDF;
 use Slidemaker::RakudocUtils;
 use Slidemaker::Classes;
 
+sub fix-title(
+    :$page!,
+    :$debug,
+    ) is export {
+    # box the top part of the slide
+    # color it
+    # overlay white title and any subtitle
+    my $g = $page.gfx;
+    $g.Save;
+    $g.Restore;
+}
+
 sub slide2pdf(
     Slide $slide,
     Config :$config,

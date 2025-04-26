@@ -13,6 +13,22 @@ use Slidemaker::Classes;
 my $ifil = "slides.rakudoc";
 my $ofil = $ifil.split(".").head ~ ".pdf";
 
+my $path = "/usr/share/fonts/opentype/freefont";
+my @fonts = (
+    %(:file("$path/FreeMono.otf"), :mono),
+    %(:file("$path/FreeMonoBold.otf"), :mono, :bold),
+    %(:file("$path/FreeMonoBoldOblique.otf"), :mono, :bold, :italic),
+    %(:file("$path/FreeMonoOblique.otf"), :mono, :italic),
+    %(:file("$path/FreeSans.otf")),
+    %(:file("$path/FreeSansBold.otf"), :bold),
+    %(:file("$path/FreeSansBoldOblique.otf"), :bold, :italic),
+    %(:file("$path/FreeSansOblique.otf"), :italic),
+    %(:file("$path/FreeSerif.otf")),
+    %(:file("$path/FreeSerifBold.otf"), :bold),
+    %(:file("$path/FreeSerifBoldItalic.otf"), :bold, :italic),
+    %(:file("$path/FreeSerifItalic.otf"), :italic),
+);
+
 # parse-slides2
 
 if not @*ARGS {
@@ -203,7 +219,7 @@ for @pods.kv -> $i, $v {
 }
 say "See debug pod text chunks: 'chunkN.txt'";
 
-# transform them into PDF files with default Pod::To::PDF
+# transform them into PDF files with default Pod::To::PDF::Lite
 # options for sub pod2pdf:
 #   :$width, :$height # default: 612 x 792 [Letter: Portrait]
 for @pods.kv -> $i, $v {
@@ -213,11 +229,27 @@ for @pods.kv -> $i, $v {
     # for @fonts need to use PDF::Font::Loader
     #   Hash :@fonts (array of hashes: key: path; value: attribut: :bold, :italic, 
     #             :mono
-    my PDF::Lite $pdf = pod2pdf $p, :pdf($pdf0),
-                        :width(792), :height(612), :margin(72);
-    #$pdf.save-as: "chunk$i.pdf";
+    =begin comment
+    # using sub pod2pdf
+    my PDF::Lite $pdf = pod2pdf $p, 
+                        :pdf($pdf0), # add this pdf to the parent pfd0
+                        :width(792), :height(612), # landscape Letter
+                        :margin(72);
+    =end comment
+    # using class Pod::To::PDF::Lite.render
+    my Pod::To::PDF::Lite $pdf .= new: :pod($p), 
+                        :@fonts,
+           #            :pdf($pdf0), # add this pdf to the parent pfd0
+                        :width(792), :height(612), # landscape Letter
+                        :margin(72);
 }
-say "See debug PDF files: 'chunkN.pdf'";
+
+# do any pagination during page embellishment
+for $pdf0.pages.kv -> $i, $page {
+    say "pdf page index: ", $i;
+    #my $w = Pod::To::PDF::Lite::Writer.new: :@font-map;
+}
+
 $pdf0.save-as: $ofil;
 say "See PDF slide deck: '$ofil'";
 

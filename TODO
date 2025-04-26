@@ -1,3 +1,19 @@
+Now using 'Pod::To::PDF::Lite' to gen the basic PDF slides
+  + need to be able to tweak the output via 
+    the module's 'writer' method
+    - perhaps add special :config key/value
+    - if David is willing, help define Config values that will
+      affect a pod chunk's affect on the $page
+  + try:
+    - after intial conversion, go through all pages
+      and put the title in a blue box, rewrite title
+      (and subtitle) and overlay them in white in the
+      box
+    - try to set change font and size on the generated
+      pages
+
+=old
+
 Use 'Rakuast::RakuDoc::Render' parsing to begin
 rudimentary generation of simple slides, letters, and articles.
 
