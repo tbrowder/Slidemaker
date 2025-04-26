@@ -1,4 +1,8 @@
 Now using 'Pod::To::PDF::Lite' to gen the basic PDF slides
+  + undocumented: use the :$style option 
+      define a new Style class object, and set the params
+        you want the single page will use it
+
   + need to be able to tweak the output via 
     the module's 'writer' method
     - perhaps add special :config key/value

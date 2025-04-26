@@ -2,7 +2,7 @@ use Pod::Load;
 use File::Temp;
 use PDF::Lite;
 use Pod::To::PDF::Lite;
-use PDF::Font::Loader :load-font;
+use PDF::Font::Loader :load-font, :find-font;
 
 use Slidemaker;
 use Slidemaker::Resources;
@@ -214,10 +214,12 @@ for @slides {
 }
 
 # transform them into pod text chunks for QC
-for @pods.kv -> $i, $v {
-    spurt "chunk$i.txt".IO, $v
+if $debug {
+    for @pods.kv -> $i, $v {
+        spurt "chunk$i.txt".IO, $v
+    }
+    say "DEBUG: See pod text chunks: 'chunkN.txt'";
 }
-say "See debug pod text chunks: 'chunkN.txt'";
 
 # transform them into PDF files with default Pod::To::PDF::Lite
 # options for sub pod2pdf:
@@ -237,18 +239,40 @@ for @pods.kv -> $i, $v {
                         :margin(72);
     =end comment
     # using class Pod::To::PDF::Lite.render
+    my $style = Pod::To::PDF::Lite::Style.new: 
+                 :font-size(40)
+                 ;
+    # this works!!
     my Pod::To::PDF::Lite $pdf .= new: :pod($p), 
                         :@fonts,
-           #            :pdf($pdf0), # add this pdf to the parent pfd0
+                        :pdf($pdf0), # add this pdf to the parent pdf0
                         :width(792), :height(612), # landscape Letter
-                        :margin(72);
+                        :margin(72),
+                        :$style,
+                        ;
+    
+    # try embellishing it here:
+    my %font-map = $pdf.font-map;
+    my $np = $pdf.pdf.Pages.elems;
+    say "npages = $np";
+    $style = Pod::To::PDF::Lite::Style.new: 
+                 :font-size(20)
+                 ;
+    my $w = Pod::To::PDF::Lite::Writer.new: 
+                 :pages($pdf.pdf.Pages),
+                 :%font-map,
+                 :$style;
+                 ;
+    #my $w = $pdf.writer;
 }
 
+=begin comment
 # do any pagination during page embellishment
 for $pdf0.pages.kv -> $i, $page {
     say "pdf page index: ", $i;
-    #my $w = Pod::To::PDF::Lite::Writer.new: :@font-map;
+    #"my $w = Pod::To::PDF::Lite::Writer.new: :@font-map;
 }
+=end comment
 
 $pdf0.save-as: $ofil;
 say "See PDF slide deck: '$ofil'";
