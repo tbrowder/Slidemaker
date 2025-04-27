@@ -1,4 +1,8 @@
 Now using 'Pod::To::PDF::Lite' to gen the basic PDF slides
+  + in the interim, consider possibility of using
+      a non-standard =slide format
+      without a formal pod component
+
   + undocumented: use the :$style option 
       define a new Style class object, and set the params
         you want the single page will use it

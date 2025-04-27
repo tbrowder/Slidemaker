@@ -240,7 +240,7 @@ for @pods.kv -> $i, $v {
     =end comment
     # using class Pod::To::PDF::Lite.render
     my $style = Pod::To::PDF::Lite::Style.new: 
-                 :font-size(40)
+                 :font-size(30) # 40 is too large
                  ;
     # this works!!
     my Pod::To::PDF::Lite $pdf .= new: :pod($p), 
@@ -253,8 +253,10 @@ for @pods.kv -> $i, $v {
     
     # try embellishing it here:
     my %font-map = $pdf.font-map;
-    my $np = $pdf.pdf.Pages.elems;
-    say "npages = $np";
+    if $debug {
+        my $np = $pdf.pdf.Pages.elems;
+        say "npages = $np";
+    }
     $style = Pod::To::PDF::Lite::Style.new: 
                  :font-size(20)
                  ;
