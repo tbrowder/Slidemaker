@@ -233,9 +233,8 @@ for @pods.kv -> $i, $v {
     #             :mono
 
     # new plan: handle the pod here
-    for $p.kv -> $k, $v {
-        say $k.raku;
-        say $v.raku;
+    for $p {
+        say $p.raku;
     }
 
     say "DEBUG early exit"; exit;
