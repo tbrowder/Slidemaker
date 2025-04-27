@@ -88,7 +88,7 @@ for @*ARGS  {
 
 $ofil = $pod-fil.split(".").head ~ ".pdf";
 # read the input file and split into:
-#   a prologue
+#   a config prologue
 #   slide chunks
 # each chunk consists of the text starting at
 # each =slide until the EOF or the next =slide
@@ -231,6 +231,15 @@ for @pods.kv -> $i, $v {
     # for @fonts need to use PDF::Font::Loader
     #   Hash :@fonts (array of hashes: key: path; value: attribut: :bold, :italic, 
     #             :mono
+
+    # new plan: handle the pod here
+    for $p.kv -> $k, $v {
+        say $k.raku;
+        say $v.raku;
+    }
+
+    say "DEBUG early exit"; exit;
+
     =begin comment
     # using sub pod2pdf
     my PDF::Lite $pdf = pod2pdf $p, 
