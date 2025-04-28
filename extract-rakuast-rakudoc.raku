@@ -36,7 +36,6 @@ class PodNode {
 # See details of RakuAST rakudoc parsing at:
 #   http://github.com/Rakudo/rakudo/lib/RakuDoc/To/Text.rakumod
 
-
 use experimental :rakuast;
 %*ENV<RAKUDO_RAKUAST> = 1;
 
@@ -72,6 +71,7 @@ for @*ARGS {
         unless $pod-file.IO.r {
             die "FATAL: Unable to open input file '$pod-file'";
         }
+        say "Proccessing input file '$pod-file'";
     }
 }
 
@@ -79,6 +79,28 @@ my @unhandled-pod;
 my @pod-chunks; # a global array to collect chunks from the pod walk
 
 for $pod-file.IO.slurp.AST.rakudoc -> $pod-node {
+    =begin comment
+    a $pod-node is roughly same as $ast in 
+        multi sub rakudoc2text(
+            RakuAST::Doc::Block:D $ast
+            --> Str
+        )
+    the $ast handling is further broken down by $ast.type into
+    specialized multi subs:
+        alias            ''
+        code             code2text($ast)
+        comment          ''
+        config           ''
+        head             heading2text($ast)
+        implicit-code
+        item
+        pod
+        rakudoc
+        table
+        default          block2text($ast)
+    =end comment
+
+     
     #dd $pod-node;
     #next;
 
@@ -142,8 +164,10 @@ sub walk-pod($node, :$parent, :$level, :$debug) is export {
     say "    parents's level: $level";
     say "    child level:     {$level+1}";
 
-    dd $node;
-    return;
+    if $debug {
+        say dd $node;
+        return;
+    }
 
     my $pnode = PodNode.new: :$id, :$parent, :level($level+1);
     %nodes{$id} = $pnode; # hash of IDs and pod nodes
