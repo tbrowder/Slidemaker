@@ -1,9 +1,11 @@
 #!/usr/bin/env raku
 
+if 0 {
 die qq:to/HERE/;
 Tom, see work in module Slidemaker
    AND @finanalyst's rakuast-rakudoc-render
 HERE
+}
 
 # Ideas:
 #   treat like a vulnerability tree:
@@ -38,7 +40,9 @@ class PodNode {
 use experimental :rakuast;
 %*ENV<RAKUDO_RAKUAST> = 1;
 
-my $pod-file = "../docs/README.rakudoc";
+#my $pod-file = "../docs/README.rakudoc";
+#my $pod-file = "resources/example.rakudoc";
+my $pod-file = "resources/real-pod-example.rakudoc";
 my $ofil1    = "pod-dump.txt";
 my $ofil2    = "pod-unhandled.txt";
 
@@ -140,7 +144,6 @@ sub walk-pod($node, :$parent, :$level, :$debug) is export {
 
     dd $node;
     return;
-
 
     my $pnode = PodNode.new: :$id, :$parent, :level($level+1);
     %nodes{$id} = $pnode; # hash of IDs and pod nodes

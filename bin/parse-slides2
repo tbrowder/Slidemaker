@@ -224,7 +224,7 @@ if $debug {
 # transform them into PDF files with default Pod::To::PDF::Lite
 # options for sub pod2pdf:
 #   :$width, :$height # default: 612 x 792 [Letter: Portrait]
-for @pods.kv -> $i, $v {
+POD: for @pods.kv -> $i, $v {
     my $p = load $v;
     # we want landscape orientation, fake it:
     #   :margin default: 20
@@ -232,12 +232,26 @@ for @pods.kv -> $i, $v {
     #   Hash :@fonts (array of hashes: key: path; value: attribut: :bold, :italic, 
     #             :mono
 
-    # new plan: handle the pod here
-    for $p {
-        say $p.raku;
+    with $p {
+        when $_ ~~ Pod::Block::Named {
+            say "known pod block type";
+        }
+        default {
+            say "UNKNOWN pod block type";
+        }
     }
+    =begin comment
+    my $o = Pod::Block::Named.new($p);
 
-    say "DEBUG early exit"; exit;
+    # new plan: handle the pod here
+    say qq:to/HERE/;
+    ==============================
+    POD:
+    HERE
+    =end comment
+
+    next POD;
+    # say "DEBUG early exit"; exit;
 
     =begin comment
     # using sub pod2pdf
@@ -246,6 +260,7 @@ for @pods.kv -> $i, $v {
                         :width(792), :height(612), # landscape Letter
                         :margin(72);
     =end comment
+    =begin comment
     # using class Pod::To::PDF::Lite.render
     my $style = Pod::To::PDF::Lite::Style.new: 
                  :font-size(30) # 40 is too large
@@ -272,6 +287,7 @@ for @pods.kv -> $i, $v {
                  :pages($pdf.pdf.Pages),
                  :%font-map,
                  :$style;
+    =end comment
                  ;
     #my $w = $pdf.writer;
 }
