@@ -79,6 +79,7 @@ my @unhandled-pod;
 my @pod-chunks; # a global array to collect chunks from the pod walk
 
 for $pod-file.IO.slurp.AST.rakudoc -> $pod-node {
+
     =begin comment
     a $pod-node is roughly same as $ast in 
         multi sub rakudoc2text(
