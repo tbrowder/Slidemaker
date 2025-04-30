@@ -18,10 +18,10 @@ unit class Slidemaker::RakuDoc::To::Parts;
 # In addition to the Str that is part of each pod part, we
 # return a class object that identifies the part.
 
-
 class Part is export {
     has $.part is required; # the type of the part
     has $.text is required; # the string part
+    has $.ast;              # the ast part
 }
 
 
@@ -62,12 +62,18 @@ my constant %formats =
 ;
 
 #-- primary dispatchers --------------------------------------------------------
+my proto sub rakudoc2parts(| --> Part:D) is export {
 
-my proto sub rakudoc2parts(|) is export {
+    my $text;
 
     # not the first time we call
     if @*NOTES.defined {
-        {*}
+        if @*NOTES -> @notes {
+            my $index = @notes.elems - 1;
+            my str @parts = [];
+            @parts.push: (++$index).Str(:superscript) ~ " $_\n" for @notes;
+            $text = @parts.join;
+        }
     }
 
     # the first time we call
@@ -89,8 +95,9 @@ my proto sub rakudoc2parts(|) is export {
             @parts.push: "\nREFERENCES\n----------\n";
             @parts.push: (++$index).Str(:superscript) ~ " $_\n" for @xrefs;
         }
-        @parts.join
+        $text = @parts.join
     }
+    Part.new: :$text, :part("unk");
 }
 
 # basically make sure Cool stuff that crept in doesn't bomb
@@ -99,7 +106,8 @@ my multi sub rakudoc2parts(Cool:D $cool  --> Str:D) { $cool.Str }
 
 # make sure we only look at interesting ::Doc objects
 my multi sub rakudoc2parts(RakuAST::Node:D $ast --> Part:D) { # Str:D) {
-    $ast.rakudoc.map(&rakudoc2parts).join
+    my $text = $ast.rakudoc.map(&rakudoc2parts).join;
+    Part.new: :$text, :part("unk");
 }
 
 # the general handler, with specific sub-actions
@@ -108,19 +116,21 @@ my multi sub rakudoc2parts(RakuAST::Doc::Block:D $ast --> Part:D) { # Str:D) {
     # Set up dynamic lookup for allowable markup letters
     my %*OK := $ast.allowed-markup;
 
+    my $text;
     given $ast.type {
-        when 'alias'         { ''                  }
-        when 'code'          { code2parts($ast)    }
-        when 'comment'       { ''                  }
-        when 'config'        { ''                  }
-        when 'head'          { heading2parts($ast) }
-        when 'implicit-code' { code2parts($ast)    }
-        when 'item'          { item2parts($ast)    }
-        when 'pod'           { paragraphify($ast)  }
-        when 'rakudoc'       { paragraphify($ast)  }
-        when 'table'         { table2parts($ast)   }
-        default              { block2parts($ast)   }
+        when 'alias'         { $text = '';                  }
+        when 'code'          { $text = code2parts($ast);    }
+        when 'comment'       { $text = '';                  }
+        when 'config'        { $text = '';                  }
+        when 'head'          { $text = heading2parts($ast); }
+        when 'implicit-code' { $text = code2parts($ast);    }
+        when 'item'          { $text = item2parts($ast);    }
+        when 'pod'           { $text = paragraphify($ast);  }
+        when 'rakudoc'       { $text = paragraphify($ast);  }
+        when 'table'         { $text = table2parts($ast);   }
+        default              { $text = block2parts($ast);   }
     }
+    Part.new: :$text, :part($ast.type);
 }
 
 # handle any declarator targets
@@ -171,27 +181,28 @@ my multi sub rakudoc2parts(RakuAST::Doc::DeclaratorTarget:D $ast --> Part:D) { #
 # handle any markup such as B<foo>
 my multi sub rakudoc2parts(RakuAST::Doc::Markup:D $ast --> Part:D) { # Str:D) {
     my str $letter = $ast.letter;
+    my $s;
     if !%*OK{$letter} {
         if $letter ne 'E' && $ast.meta -> @meta {
-            $letter
+            $s = $letter
               ~ $ast.opener
               ~ $ast.atoms.map(&rakudoc2parts).join
               ~ "|"
               ~ @meta.map(&rakudoc2parts).join
-              ~ $ast.closer
+              ~ $ast.closer;
         }
         else {
-            $ast.Str
+            $s = $ast.Str;
         }
     }
     elsif $letter eq 'Z' {
-        ''
+        $s = '';
     }
     elsif $letter eq 'A' {
-        rakudoc2parts $ast.meta.head
+        $s = rakudoc2parts $ast.meta.head;
     }
     elsif $letter eq 'C' {
-        rakudoc2parts bold $ast.atoms.join
+        $s = rakudoc2parts bold $ast.atoms.join;
     }
     else {
         my str $text = $ast.atoms.map(&rakudoc2parts).join;
@@ -202,12 +213,12 @@ my multi sub rakudoc2parts(RakuAST::Doc::Markup:D $ast --> Part:D) { # Str:D) {
             # remember the URL as a note
             if $ast.meta.head -> $url {
                 @*NOTES.push: $url;
-                $text ~ @*NOTES.elems.Str(:superscript)
+                $s = $text ~ @*NOTES.elems.Str(:superscript);
             }
 
             # no URL specified
             else {
-                $text
+                $s = $text;
             }
         }
         elsif $letter eq 'X' {
@@ -216,21 +227,22 @@ my multi sub rakudoc2parts(RakuAST::Doc::Markup:D $ast --> Part:D) { # Str:D) {
             # remember the xref as a note
             if $ast.meta -> @meta {
                 @*XREFS.push: @meta.map(*.join(', ')).join('; ');
-                $text ~ @*XREFS.elems.Str(:subscript)
+                $s = $text ~ @*XREFS.elems.Str(:subscript);
             }
 
             # no URL specified
             else {
-                $text
+                $s = $text;
             }
         }
         elsif %formats{$letter} -> &hilight {
-            hilight($text)
+            $s = hilight($text);
         }
         else {
-             $text
+             $s = $text;
         }
     }
+    Part.new: :text($s), :part("markup");
 }
 
 # handle simple paragraphs (that will be word-wrapped)
@@ -238,7 +250,7 @@ my multi sub rakudoc2parts(RakuAST::Doc::Paragraph:D $ast --> Part:D) { # Str:D)
     # $ast.atoms.map(&rakudoc2parts).join.naive-word-wrapper ~ "\n\n"
     my $text = $ast.atoms.map(&rakudoc2parts).join.naive-word-wrapper ~ "\n\n";
 
-    Part.new: :$text, :part($ast.type);
+    Part.new: :$text, :part("paragraph");
 }
 
 # handle a row in a table

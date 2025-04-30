@@ -8,5 +8,5 @@ my $ifil = "resources/real-pod-example.rakudoc";
 
 my $ast = $ifil.IO.slurp.AST;
 
-say rakudoc2text($ast);
+say rakudoc2parts($ast);
 
