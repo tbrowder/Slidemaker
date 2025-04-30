@@ -191,19 +191,26 @@ sub walk-pod($node, :$parent, :$level, :$debug) is export {
     HERE
     =end comment
 
-    my ($pod-type-name, $node-type) = "N/A", "N/A";
+    my ($pod-type-name, $node-type, $type) = "N/A", "N/A", "";
     with $node {
         when $_ ~~ 'RakuAst::Doc::Paragraph' {
             $pod-type-name = "RakuAst::Doc::Paragraph";
         }
         when $_ ~~ 'RakuAst::Doc::Block' {
             $pod-type-name = "RakuAst::Doc::Block";
+            $type = $_.type;
+        }
+        when $_ ~~ 'RakuAst::Doc::Block' {
+            $pod-type-name = "RakuAst::Doc::Block";
+        }
+        when $_ ~~ 'RakuAst::Doc::Markup' {
+            $pod-type-name = "RakuAst::Doc::Markup";
         }
         when $_ ~~ Str {
             $pod-type-name = "String";
         }
         default {
-            note "WARNING: Unknown node type...";
+            note "WARNING: Unknown node type '$type'...";
         }
     }
 
