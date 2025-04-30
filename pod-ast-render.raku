@@ -2,7 +2,7 @@
 
 use experimental :rakuast;
 
-use RakuDoc::To::Text;
+use Slidemaker::RakuDoc::To::Parts;
 
 my $ifil = "resources/real-pod-example.rakudoc";
 

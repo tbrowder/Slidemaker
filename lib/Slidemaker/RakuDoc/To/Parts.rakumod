@@ -1,3 +1,7 @@
+use experimental :rakuast;
+
+unit class Slidemaker::RakuDoc::To::Parts;
+
 # use RakuDoc::To::Parts;
 # say RakuDoc::To::Parts.render($ast)
 #
@@ -14,39 +18,37 @@
 # In addition to the Str that is part of each pod part, we
 # return a class object that identifies the part.
 
-use experimental :rakuast;
 
 class Part is export {
     has $.part is required; # the type of the part
     has $.text is required; # the string part
 }
 
-unit class RakuDoc::To::Parts;
 
 method render($ast) { $ast.map(&rakudoc2parts).join }
 
 # colorless ANSI constants
-my constant RESET         = "\e[0m";
-my constant BOLD-ON       = "\e[1m";
-my constant ITALIC-ON     = "\e[3m";
-my constant UNDERLINE-ON  = "\e[4m";
-my constant INVERSE-ON    = "\e[7m";
-my constant MIDLINE-ON    = "\e[9m";  # strikethrough
-#my constant OVERLINE-ON   = "\e[??m";
+my constant RESET            = "\e[0m";
+my constant BOLD-ON          = "\e[1m";
+my constant ITALIC-ON        = "\e[3m";
+my constant UNDERLINE-ON     = "\e[4m";
+my constant INVERSE-ON       = "\e[7m";
+my constant STRIKETHROUGH-ON = "\e[9m";
+my constant OVERLINE-ON      = "\e[9m"; # TODO: use correct code, if any
 
-my constant BOLD-OFF      = "\e[22m";
-my constant ITALIC-OFF    = "\e[23m";
-my constant UNDERLINE-OFF = "\e[24m";
-my constant INVERSE-OFF   = "\e[27m";
-my constant MIDLINE-OFF   = "\e[29m";
-#my constant OVERLINE-OFF  = "\e[2?m";
+my constant BOLD-OFF          = "\e[22m";
+my constant ITALIC-OFF        = "\e[23m";
+my constant UNDERLINE-OFF     = "\e[24m";
+my constant INVERSE-OFF       = "\e[27m";
+my constant STRIKETHROUGH-OFF = "\e[29m";
+my constant OVERLINE-OFF      = "\e[29m"; # TODO: use correct code, if any
 
-my sub bold(str $text)      { BOLD-ON      ~ $text ~ BOLD-OFF      }
-my sub italic(str $text)    { ITALIC-ON    ~ $text ~ ITALIC-OFF    }
-my sub underline(str $text) { UNDERLINE-ON ~ $text ~ UNDERLINE-OFF }
-my sub inverse(str $text)   { INVERSE-ON   ~ $text ~ INVERSE-OFF   }
-my sub midline(str $text)   { MIDLINE-ON   ~ $text ~ MIDLINE-OFF   }
-my sub overline(str $text)  { OVERLINE-ON  ~ $text ~ OVERLINE-OFF   }
+my sub bold(str $text)          { BOLD-ON          ~ $text ~ BOLD-OFF          }
+my sub italic(str $text)        { ITALIC-ON        ~ $text ~ ITALIC-OFF        }
+my sub underline(str $text)     { UNDERLINE-ON     ~ $text ~ UNDERLINE-OFF     }
+my sub inverse(str $text)       { INVERSE-ON       ~ $text ~ INVERSE-OFF       }
+my sub strikethrough(str $text) { STRIKETHROUGH-ON ~ $text ~ STRIKETHROUGH-OFF }
+my sub overline(str $text)      { OVERLINE-ON      ~ $text ~ OVERLINE-OFF      }
 
 # ANSI formatting allowed
 my constant %formats =
@@ -96,33 +98,33 @@ my multi sub rakudoc2parts(Str:D $string --> Str:D) { $string   }
 my multi sub rakudoc2parts(Cool:D $cool  --> Str:D) { $cool.Str }
 
 # make sure we only look at interesting ::Doc objects
-my multi sub rakudoc2parts(RakuAST::Node:D $ast --> Part:D { # Str:D) {
+my multi sub rakudoc2parts(RakuAST::Node:D $ast --> Part:D) { # Str:D) {
     $ast.rakudoc.map(&rakudoc2parts).join
 }
 
 # the general handler, with specific sub-actions
-my multi sub rakudoc2parts(RakuAST::Doc::Block:D $ast --> Part:D { # Str:D) {
+my multi sub rakudoc2parts(RakuAST::Doc::Block:D $ast --> Part:D) { # Str:D) {
 
     # Set up dynamic lookup for allowable markup letters
     my %*OK := $ast.allowed-markup;
 
     given $ast.type {
-        when 'alias'         { ''                 }
+        when 'alias'         { ''                  }
         when 'code'          { code2parts($ast)    }
-        when 'comment'       { ''                 }
-        when 'config'        { ''                 }
+        when 'comment'       { ''                  }
+        when 'config'        { ''                  }
         when 'head'          { heading2parts($ast) }
         when 'implicit-code' { code2parts($ast)    }
         when 'item'          { item2parts($ast)    }
-        when 'pod'           { paragraphify($ast) }
-        when 'rakudoc'       { paragraphify($ast) }
+        when 'pod'           { paragraphify($ast)  }
+        when 'rakudoc'       { paragraphify($ast)  }
         when 'table'         { table2parts($ast)   }
         default              { block2parts($ast)   }
     }
 }
 
 # handle any declarator targets
-my multi sub rakudoc2parts(RakuAST::Doc::DeclaratorTarget:D $ast --> Part:D { # Str:D) {
+my multi sub rakudoc2parts(RakuAST::Doc::DeclaratorTarget:D $ast --> Part:D) { # Str:D) {
     my str @parts;
 
     # an empty body so that scopes will be rendered as { ... }
@@ -167,7 +169,7 @@ my multi sub rakudoc2parts(RakuAST::Doc::DeclaratorTarget:D $ast --> Part:D { # 
 }
 
 # handle any markup such as B<foo>
-my multi sub rakudoc2parts(RakuAST::Doc::Markup:D $ast --> Part:D { # Str:D) {
+my multi sub rakudoc2parts(RakuAST::Doc::Markup:D $ast --> Part:D) { # Str:D) {
     my str $letter = $ast.letter;
     if !%*OK{$letter} {
         if $letter ne 'E' && $ast.meta -> @meta {
@@ -232,7 +234,7 @@ my multi sub rakudoc2parts(RakuAST::Doc::Markup:D $ast --> Part:D { # Str:D) {
 }
 
 # handle simple paragraphs (that will be word-wrapped)
-my multi sub rakudoc2parts(RakuAST::Doc::Paragraph:D $ast --> Part:D { # Str:D) {
+my multi sub rakudoc2parts(RakuAST::Doc::Paragraph:D $ast --> Part:D) { # Str:D) {
     # $ast.atoms.map(&rakudoc2parts).join.naive-word-wrapper ~ "\n\n"
     my $text = $ast.atoms.map(&rakudoc2parts).join.naive-word-wrapper ~ "\n\n";
 
@@ -240,7 +242,7 @@ my multi sub rakudoc2parts(RakuAST::Doc::Paragraph:D $ast --> Part:D { # Str:D) 
 }
 
 # handle a row in a table
-my multi sub rakudoc2parts(RakuAST::Doc::LegacyRow:D $ast --> Part:D { # Str:D) {
+my multi sub rakudoc2parts(RakuAST::Doc::LegacyRow:D $ast --> Part:D) { # Str:D) {
     # $ast.DEPARSE
     my $text = $ast.DEPARSE;
     Part.new: :$text, :part($ast.type);
@@ -258,32 +260,32 @@ my sub paragraphify($ast) {
 }
 
 # produce a flattened text version of the given ast without furter modifications
-my sub textify(RakuAST::Doc::Block:D $ast --> Part:D { # Str:D) {
+my sub textify(RakuAST::Doc::Block:D $ast --> Part:D) { # Str:D) {
     # $ast.paragraphs.map(&rakudoc2parts).join
     my $text = $ast.paragraphs.map(&rakudoc2parts).join;
     Part.new: :$text, :part($ast.type);
 }
 
 # handle (implicit) code blocks
-my sub code2parts(RakuAST::Doc::Block:D $ast --> Part:D { # Str:D) {
+my sub code2parts(RakuAST::Doc::Block:D $ast --> Part:D) { # Str:D) {
     # textify($ast).indent(4)
     my $text = textify($ast).indent(4);
     Part.new: :$text, :part($ast.type);
 }
 
 # handle =head
-my sub heading2parts(RakuAST::Doc::Block:D $ast --> Part:D { # Str:D) {
+my sub heading2parts(RakuAST::Doc::Block:D $ast --> Part:D) { # Str:D) {
     my str $text = textify($ast).trim-trailing;
     $text = $text ~ "\n" ~ ('-' x $text.chars) ~ "\n";
 
     my int $level = $ast.level.Int;
-    $text.indent($level > 2 ?? 4 !! ($level - 1) * 2)
+    $text.indent($level > 2 ?? 4 !! ($level - 1) * 2);
     
     Part.new: :$text, :part($ast.type);
 }
 
 # handle =item
-my sub item2parts(RakuAST::Doc::Block:D $ast --> Part:D { # Str:D)  {
+my sub item2parts(RakuAST::Doc::Block:D $ast --> Part:D) { # Str:D)  {
     # ('* ' ~ textify($ast)).indent(2 * $ast.level)
     my $text = ('* ' ~ textify($ast)).indent(2 * $ast.level);
     Part.new: :part($ast.type), :$text;
@@ -330,13 +332,13 @@ my sub table2parts(RakuAST::Doc::Block:D $ast) {
 }
 
 # all other =foo
-my sub block2parts(RakuAST::Doc::Block:D $ast --> Part:D { # Str:D) {
+my sub block2parts(RakuAST::Doc::Block:D $ast --> Part:D) { # Str:D) {
     my str $type = $ast.type;
 
     #bold($type)
-    my $s = bold($type)
+    my $text = bold($type)
       ~ "\n" ~ ('-' x $type.chars)
-      ~ "\n" ~ paragraphify($ast)
+      ~ "\n" ~ paragraphify($ast);
     Part.new: :part($type), :$text;
 }
 

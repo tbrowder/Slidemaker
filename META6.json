@@ -30,6 +30,7 @@
     "Slidemaker::Action": "lib/Slidemaker/Action.rakumod",
     "Slidemaker::Classes": "lib/Slidemaker/Classes.rakumod",
     "Slidemaker::PDF": "lib/Slidemaker/PDF.rakumod",
+    "Slidemaker::RakuDoc::To::Parts": "lib/Slidemaker/RakuDoc/To/Parts.rakumod",
     "Slidemaker::RakuDoc::To::RakuDoc": "lib/Slidemaker/RakuDoc/To/RakuDoc.rakumod",
     "Slidemaker::RakuDoc::To::Text": "lib/Slidemaker/RakuDoc/To/Text.rakumod",
     "Slidemaker::RakudocUtils": "lib/Slidemaker/RakudocUtils.rakumod",
@@ -41,7 +42,7 @@
   ],
   "source-url": "https://github.com/tbrowder/Slidemaker.git",
   "tags": [
-    "pod slides pdf"
+    "pod slides pdf rakudoc"
   ],
   "test-depends": [
   ],
