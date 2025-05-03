@@ -1,20 +1,22 @@
 #!/usr/bin/env raku
 
 use Pod::Load;
+use Pod::TreeWalker;
+use Slidemaker;
+use Slidemaker::Listener;
 
-#my $f = "resources/examples.rakudoc";
+
 my $f = "resources/real-pod-example.rakudoc";
 my $pod-tree = load-pod $f.IO.slurp;
-for $pod-tree -> $pod-item {
-    if $pod-item.config {
-        my %h = $pod-item.config;
-        for %h.kv -> $k, $v {
-            say "key: $k => $v";
-        }
-    }
-    for $pod-item.contents -> $pod-block {
-    }
 
-}
+my $L = Slidemaker::Listener.new;
 
+my $o = Pod::TreeWalker.new: :listener($L);
+$o.walk-pod($pod-tree.head);
+#$o.walk-pod(@($pod-tree));
+#say "event: {$_.raku}" for $L.events;
+say "event: {$_.gist}" for $L.events;
 
+=finish
+# this works:
+say $o.text-contents-of($pod-tree.head);

@@ -8,7 +8,7 @@ Slidemaker::PDF
 Slidemaker::RakudocUtils
 Slidemaker::Classes
 Slidemaker::Resources
-Slidemaker::RakuDoc::To::Parts
+Slidemaker::Listener
 >;
 
 subtest {
