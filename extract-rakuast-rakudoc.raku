@@ -37,7 +37,7 @@ class PodNode {
 #   http://github.com/Rakudo/rakudo/lib/RakuDoc/To/Text.rakumod
 
 use experimental :rakuast;
-%*ENV<RAKUDO_RAKUAST> = 1;
+#%*ENV<RAKUDO_RAKUAST> = 1;
 
 #my $pod-file = "../docs/README.rakudoc";
 #my $pod-file = "resources/example.rakudoc";
@@ -53,7 +53,6 @@ if not @*ARGS {
 
     Extracts pod into a list of objects in a suitable format
     for processing into a PDF document.
-    document.
 
     See details of RakuAST rakudoc parsing at:
         http://github.com/Rakudo/rakudo/lib/RakuDoc/To/Text.rakumod
@@ -78,7 +77,11 @@ for @*ARGS {
 my @unhandled-pod;
 my @pod-chunks; # a global array to collect chunks from the pod walk
 
-for $pod-file.IO.slurp.AST.rakudoc -> $pod-node {
+#for $pod-file.IO.slurp.AST.rakudoc -> $pod-node {
+for $pod-file.IO.slurp.AST -> $pod-node {
+    #say $pod-node.WHAT;
+    say dd $pod-node;
+    exit;
 
     =begin comment
     a $pod-node is roughly same as $ast in 
@@ -105,10 +108,10 @@ for $pod-file.IO.slurp.AST.rakudoc -> $pod-node {
     #dd $pod-node;
     #next;
 
-
     #say dd $pod-node;
     #exit;
     #  $=pod
+
     walk-pod $pod-node, :parent(0), :level(0); # top-level pod;
 }
 
@@ -165,8 +168,9 @@ sub walk-pod($node, :$parent, :$level, :$debug) is export {
     say "    parents's level: $level";
     say "    child level:     {$level+1}";
 
-    if $debug {
+    if 0 or $debug {
         say dd $node;
+        #exit;
         return;
     }
 
@@ -193,18 +197,21 @@ sub walk-pod($node, :$parent, :$level, :$debug) is export {
 
     my ($pod-type-name, $node-type, $type) = "N/A", "N/A", "";
     with $node {
-        when $_ ~~ 'RakuAst::Doc::Paragraph' {
-            $pod-type-name = "RakuAst::Doc::Paragraph";
+        when $_ ~~ 'RakuAST::Node' {
+            $pod-type-name = "RakuAST::Node";
         }
-        when $_ ~~ 'RakuAst::Doc::Block' {
-            $pod-type-name = "RakuAst::Doc::Block";
+        when $_ ~~ 'RakuAST::Doc::Paragraph' {
+            $pod-type-name = "RakuAST::Doc::Paragraph";
+        }
+        when $_ ~~ 'RakuAST::Doc::Block' {
+            $pod-type-name = "RakuAST::Doc::Block";
             $type = $_.type;
         }
-        when $_ ~~ 'RakuAst::Doc::Block' {
-            $pod-type-name = "RakuAst::Doc::Block";
+        when $_ ~~ 'RakuAST::Doc::Block' {
+            $pod-type-name = "RakuAST::Doc::Block";
         }
-        when $_ ~~ 'RakuAst::Doc::Markup' {
-            $pod-type-name = "RakuAst::Doc::Markup";
+        when $_ ~~ 'RakuAST::Doc::Markup' {
+            $pod-type-name = "RakuAST::Doc::Markup";
         }
         when $_ ~~ Str {
             $pod-type-name = "String";
