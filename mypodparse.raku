@@ -16,6 +16,15 @@ $o.walk-pod($pod-tree.head);
 #$o.walk-pod(@($pod-tree));
 #say "event: {$_.raku}" for $L.events;
 say "event: {$_.gist}" for $L.events;
+for $L.events {
+    if $_ ~~ Hash {
+        say "event is a hash";
+    }
+    else {
+        say "event is NOT a hash";
+    }
+}
+
 
 =finish
 # this works:
