@@ -6,7 +6,7 @@
   "build-depends": [
   ],
   "depends": [
-    "Pod::TreeWalker",
+    "Pod::TreeWalker:ver<0.1.5>",
     "JSON::Class:auth<zef:vrurg>",
     "Abbreviations",
     "PDF::Document:ver<0.0.10+>",
@@ -18,7 +18,7 @@
     "Cairo",
     "Pod::Load",
     "Pod::To::PDF",
-    "Pod::To::PDF::Lite",
+    "Pod::To::PDF::Lite:ver<0.1.10>",
     "Pod::To::Markdown",
     "Compress::PDF"
   ],
