@@ -1,3 +1,6 @@
+Use Pod::TreeWalker and RakuDoc::Utils
+  to handle slide chunks
+
 New tack:
   + use my simple first step to extract individual
     pod chunks for each slide

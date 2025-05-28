@@ -182,6 +182,7 @@ if $debug {
 # create the complete pod file for each class, start with prologue:
 my @pods;
 my @s = @prologue-raw-lines;
+
 #unless @s.head ~~ /^ \h* '=begin' \h+ [pod|pod6|rakupod|rakudok] / {
 # TODO this is too fragile, create a sub to make it robust:
 #   strip # comments, then leading blank lines
@@ -192,6 +193,7 @@ unless @s.head ~~ /^ \h* '=begin' \h+ pod \h* $/ {
 unless @s.tail ~~ /^ \h* '=end' \h+ pod \h* $/ {
     push @s, "=end pod";
 }
+
 my $pod = @s.join("\n");
 $pod ~= "\n"; # avoid "neol" tag
 @pods.push: $pod; # the default Config
@@ -200,6 +202,8 @@ $pod ~= "\n"; # avoid "neol" tag
 my PDF::Lite $pdf0 .= new;
 
 # then the slides get the same treatment
+# as the prologue which SHOULD be used to control the data
+# for each slide page
 for @slides {
     @s = $_.raw-lines;
     unless @s.head ~~ /^ \h* '=begin' \h+ pod \h* $/ {
@@ -219,13 +223,15 @@ if $debug {
         spurt "chunk$i.txt".IO, $v
     }
     say "DEBUG: See pod text chunks: 'chunkN.txt'";
+    say "  debug exit..."; exit;
 }
 
 # transform them into PDF files with default Pod::To::PDF::Lite
 # options for sub pod2pdf:
 #   :$width, :$height # default: 612 x 792 [Letter: Portrait]
 POD: for @pods.kv -> $i, $v {
-    my $p = load $v;
+    #my $p = load $v;
+    my $p = load-pod $v;
     # we want landscape orientation, fake it:
     #   :margin default: 20
     # for @fonts need to use PDF::Font::Loader
@@ -237,7 +243,9 @@ POD: for @pods.kv -> $i, $v {
             say "known pod block type";
         }
         default {
+            my $t = $_.gist;
             say "UNKNOWN pod block type";
+            say $t;
         }
     }
     =begin comment
@@ -500,19 +508,19 @@ while @pods {
 }
 
 sub is-pod($o) {
-    my $res = 0;
+    my $res;
     with $o {
-        when Pod::Block::Para       { $res = <Para>       }
-        when Pod::Block::Named      { $res = <Named>      }
-        when Pod::Block::Declarator { $res = <Declarator> }
-        when Pod::Block::Code       { $res = <Code>       }
-        when Pod::Block::Comment    { $res = <Comment>    }
-        when Pod::Block::Table      { $res = <Table>      }
-        when Pod::Heading           { $res = <Hdg>        }
-        when Pod::Item              { $res = <Item>       }
-        when Pod::Defn              { $res = <Defn>       }
-        when Pod::FormattingCode    { $res = <FC>         }
-        default                     { $res = <Unknown>    }
+        when $_ ~~ Pod::Block::Para       { $res = <Para>       }
+        when $_ ~~ Pod::Block::Named      { $res = <Named>      }
+        when $_ ~~ Pod::Block::Declarator { $res = <Declarator> }
+        when $_ ~~ Pod::Block::Code       { $res = <Code>       }
+        when $_ ~~ Pod::Block::Comment    { $res = <Comment>    }
+        when $_ ~~ Pod::Block::Table      { $res = <Table>      }
+        when $_ ~~ Pod::Heading           { $res = <Hdg>        }
+        when $_ ~~ Pod::Item              { $res = <Item>       }
+        when $_ ~~ Pod::Defn              { $res = <Defn>       }
+        when $_ ~~ Pod::FormattingCode    { $res = <FC>         }
+        default                     { $res = $_.gist; } #<Unknown>    }
     }
     $res
 }
