@@ -1,3 +1,7 @@
+Move dot.github-hold back to .github
+
+Ensure resources handling is correct for installed module
+
 Use Pod::TreeWalker and RakuDoc::Utils
   to handle slide chunks
 
